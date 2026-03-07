@@ -5,31 +5,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Time Tracker</title>
     
-    <link rel="apple-touch-icon" href="https://rebrand.ly/time-icon-png">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="apple-touch-icon" href="https://img.icons8.com/fluency/180/clock.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="TimeClock">
 
     <style>
-        body { font-family: -apple-system, sans-serif; background-color: #F0F2F5; display: flex; flex-direction: column; align-items: center; padding: 20px; -webkit-tap-highlight-color: transparent; }
-        .card { background: white; width: 90%; max-width: 400px; padding: 20px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 20px; text-align: center; }
-        .clock { font-size: 40px; font-weight: bold; margin: 10px 0; font-variant-numeric: tabular-nums; }
-        .status { font-weight: bold; color: #1A73E8; margin-bottom: 20px; font-size: 18px; }
-        .timer-box { background: #F8F9FA; padding: 12px; border-radius: 12px; margin-top: 10px; }
-        .timer-label { font-size: 11px; color: #888; font-weight: bold; letter-spacing: 0.5px; }
-        .timer-value { font-size: 26px; font-weight: bold; color: #4285F4; font-family: monospace; }
-        button { width: 100%; padding: 18px; margin: 6px 0; border: none; border-radius: 15px; color: white; font-size: 18px; font-weight: bold; cursor: pointer; transition: opacity 0.2s; }
-        button:active { opacity: 0.7; }
-        .in { background-color: #34A853; }
-        .meal { background-color: #FBBC05; }
-        .out { background-color: #EA4335; }
-        .reset { background-color: #5F6368; }
-        .history { text-align: left; font-size: 14px; margin-top: 10px; }
-        .history-item { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #F0F0F0; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background-color: #F0F2F5; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: env(safe-area-inset-top) 20px 20px 20px; 
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .card { background: white; width: 100%; max-width: 400px; padding: 25px; border-radius: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 20px; text-align: center; }
+        .clock { font-size: 45px; font-weight: 800; margin: 15px 0; font-variant-numeric: tabular-nums; letter-spacing: -1px; }
+        .status { font-weight: bold; color: #1A73E8; margin-bottom: 25px; font-size: 20px; text-transform: uppercase; }
+        
+        .timer-box { background: #F8F9FA; padding: 15px; border-radius: 18px; margin-top: 12px; border: 1px solid #eee; }
+        .timer-label { font-size: 11px; color: #999; font-weight: 800; letter-spacing: 1px; margin-bottom: 5px; }
+        .timer-value { font-size: 30px; font-weight: bold; color: #4285F4; font-family: 'Courier New', Courier, monospace; }
+
+        /* 빨간색 깜빡임 애니메이션 정의 */
+        @keyframes blink-red {
+            0% { color: #EA4335; opacity: 1; }
+            50% { color: #EA4335; opacity: 0.3; }
+            100% { color: #EA4335; opacity: 1; }
+        }
+        .blinking-red {
+            animation: blink-red 0.8s infinite;
+        }
+
+        button { width: 100%; padding: 20px; margin: 8px 0; border: none; border-radius: 20px; color: white; font-size: 19px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .in { background: linear-gradient(135deg, #34A853, #2D8E47); }
+        .meal { background: linear-gradient(135deg, #FBBC05, #F29900); }
+        .out { background: linear-gradient(135deg, #EA4335, #C5392F); }
+        .reset { background: #5F6368; }
+        
+        .history { text-align: left; font-size: 15px; }
+        .history-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #F0F0F0; }
+        .history-item:last-child { border-bottom: none; }
     </style>
 </head>
 <body>
     <div class="card">
-        <div id="date" style="color: #777; font-size: 14px;"></div>
+        <div id="date" style="color: #999; font-weight: 600;"></div>
         <div id="clock" class="clock">00:00:00</div>
         <div id="status" class="status">IDLE</div>
         
@@ -37,19 +60,19 @@
             <div class="timer-label">WORK DURATION</div>
             <div id="work-timer" class="timer-value">00:00:00</div>
         </div>
-        <div id="meal-box" class="timer-box" style="display:none; background-color: #FFF9E6;">
+        <div id="meal-box" class="timer-box" style="display:none; background-color: #FFF9E6; border-color: #FFE082;">
             <div class="timer-label" style="color: #F29900;">MEAL DURATION</div>
             <div id="meal-timer" class="timer-value" style="color: #F29900;">00:00:00</div>
         </div>
     </div>
 
-    <div id="buttons" style="width: 90%; max-width: 400px;"></div>
+    <div id="buttons" style="width: 100%; max-width: 400px;"></div>
 
     <div class="card history">
-        <strong style="display: block; margin-bottom: 10px;">Today's Log</strong>
-        <div class="history-item"><span>IN</span> <span id="log-in">--:--</span></div>
-        <div class="history-item"><span>MEAL</span> <span id="log-meal">--:--</span></div>
-        <div class="history-item"><span>OUT</span> <span id="log-out">--:--</span></div>
+        <strong style="font-size: 16px; color: #333;">Today's Log</strong>
+        <div class="history-item"><span>IN</span> <span id="log-in" style="font-weight:700;">--:--</span></div>
+        <div class="history-item"><span>MEAL</span> <span id="log-meal" style="font-weight:700;">--:--</span></div>
+        <div class="history-item"><span>OUT</span> <span id="log-out" style="font-weight:700;">--:--</span></div>
     </div>
 
     <script>
@@ -59,10 +82,24 @@
         function update() {
             const now = new Date();
             document.getElementById('clock').innerText = now.toLocaleTimeString('en-GB');
-            document.getElementById('date').innerText = now.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'});
+            document.getElementById('date').innerText = now.toLocaleDateString('en-US', {weekday:'long', month:'short', day:'numeric'});
             
             if (status !== 'IDLE') {
-                document.getElementById('work-timer').innerText = calculateWork(now);
+                const workMs = getWorkMs(now);
+                const workTimerElem = document.getElementById('work-timer');
+                workTimerElem.innerText = formatDiff(workMs);
+                
+                // 시간 범위 체크 (4:30~4:59 = 270~299분 / 7:50~8:00 = 470~480분)
+                const workMins = workMs / 60000;
+                const isTargetTime = (workMins >= 270 && workMins < 300) || (workMins >= 470 && workMins <= 480);
+                
+                // WORKING 상태일 때만 깜빡임 적용, 그 외(MEAL, DONE)에는 파란색 유지
+                if (status === 'WORKING' && isTargetTime) {
+                    workTimerElem.classList.add('blinking-red');
+                } else {
+                    workTimerElem.classList.remove('blinking-red');
+                }
+
                 if (status === 'MEAL' || (logs.mealS && logs.mealE)) {
                     document.getElementById('meal-box').style.display = 'block';
                     document.getElementById('meal-timer').innerText = calculateMeal(now);
@@ -71,10 +108,10 @@
             renderButtons();
         }
 
-        function calculateWork(now) {
+        function getWorkMs(now) {
             let end = (status === 'DONE') ? new Date(logs.out) : (status === 'MEAL') ? new Date(logs.mealS) : now;
             let mealDiff = (logs.mealS && logs.mealE) ? (new Date(logs.mealE) - new Date(logs.mealS)) : 0;
-            return formatDiff((new Date(end) - new Date(logs.in)) - mealDiff);
+            return (new Date(end) - new Date(logs.in)) - mealDiff;
         }
 
         function calculateMeal(now) {
@@ -110,7 +147,12 @@
                 document.getElementById('log-out').innerText = timeStr; 
             }
             else if (type === 'RESET') { 
-                location.reload(); 
+                status = 'IDLE'; logs = { in: null, mealS: null, mealE: null, out: null }; 
+                document.getElementById('log-in').innerText = '--:--'; 
+                document.getElementById('log-meal').innerText = '--:--'; 
+                document.getElementById('log-out').innerText = '--:--'; 
+                document.getElementById('meal-box').style.display = 'none';
+                document.getElementById('work-timer').classList.remove('blinking-red');
             }
             document.getElementById('status').innerText = status;
         }
