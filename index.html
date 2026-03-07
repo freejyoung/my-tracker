@@ -29,15 +29,20 @@
         .timer-label { font-size: 11px; color: #999; font-weight: 800; letter-spacing: 1px; margin-bottom: 5px; }
         .timer-value { font-size: 30px; font-weight: bold; color: #4285F4; font-family: 'Courier New', Courier, monospace; }
 
-        /* 빨간색 깜빡임 애니메이션 정의 */
+        /* 애니메이션 정의 */
         @keyframes blink-red {
             0% { color: #EA4335; opacity: 1; }
             50% { color: #EA4335; opacity: 0.3; }
             100% { color: #EA4335; opacity: 1; }
         }
-        .blinking-red {
-            animation: blink-red 0.8s infinite;
+        @keyframes blink-green {
+            0% { color: #34A853; opacity: 1; }
+            50% { color: #34A853; opacity: 0.3; }
+            100% { color: #34A853; opacity: 1; }
         }
+        
+        .blinking-red { animation: blink-red 0.8s infinite; }
+        .blinking-green { animation: blink-green 0.8s infinite; }
 
         button { width: 100%; padding: 20px; margin: 8px 0; border: none; border-radius: 20px; color: white; font-size: 19px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .in { background: linear-gradient(135deg, #34A853, #2D8E47); }
@@ -85,24 +90,33 @@
             document.getElementById('date').innerText = now.toLocaleDateString('en-US', {weekday:'long', month:'short', day:'numeric'});
             
             if (status !== 'IDLE') {
+                // 1. 업무 시간 로직 (4:30~4:59 / 7:50~8:00 빨간색 깜빡임)
                 const workMs = getWorkMs(now);
                 const workTimerElem = document.getElementById('work-timer');
                 workTimerElem.innerText = formatDiff(workMs);
                 
-                // 시간 범위 체크 (4:30~4:59 = 270~299분 / 7:50~8:00 = 470~480분)
                 const workMins = workMs / 60000;
-                const isTargetTime = (workMins >= 270 && workMins < 300) || (workMins >= 470 && workMins <= 480);
+                const isWorkTarget = (workMins >= 270 && workMins < 300) || (workMins >= 470 && workMins <= 480);
                 
-                // WORKING 상태일 때만 깜빡임 적용, 그 외(MEAL, DONE)에는 파란색 유지
-                if (status === 'WORKING' && isTargetTime) {
+                if (status === 'WORKING' && isWorkTarget) {
                     workTimerElem.classList.add('blinking-red');
                 } else {
                     workTimerElem.classList.remove('blinking-red');
                 }
 
+                // 2. 식사 시간 로직 (30분 초과 시 초록색 깜빡임)
                 if (status === 'MEAL' || (logs.mealS && logs.mealE)) {
                     document.getElementById('meal-box').style.display = 'block';
-                    document.getElementById('meal-timer').innerText = calculateMeal(now);
+                    const mealMs = getMealMs(now);
+                    const mealTimerElem = document.getElementById('meal-timer');
+                    mealTimerElem.innerText = formatDiff(mealMs);
+                    
+                    const mealMins = mealMs / 60000;
+                    if (status === 'MEAL' && mealMins >= 30) {
+                        mealTimerElem.classList.add('blinking-green');
+                    } else {
+                        mealTimerElem.classList.remove('blinking-green');
+                    }
                 }
             }
             renderButtons();
@@ -114,9 +128,9 @@
             return (new Date(end) - new Date(logs.in)) - mealDiff;
         }
 
-        function calculateMeal(now) {
+        function getMealMs(now) {
             let end = (logs.mealE) ? new Date(logs.mealE) : now;
-            return formatDiff(new Date(end) - new Date(logs.mealS));
+            return new Date(end) - new Date(logs.mealS);
         }
 
         function formatDiff(ms) {
@@ -141,6 +155,7 @@
             else if (type === 'ME') { 
                 logs.mealE = time; status = 'WORKING'; 
                 document.getElementById('log-meal').innerText = `${new Date(logs.mealS).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', hour12:false})} - ${timeStr}`; 
+                document.getElementById('meal-timer').classList.remove('blinking-green');
             }
             else if (type === 'OUT') { 
                 logs.out = time; status = 'DONE'; 
@@ -153,6 +168,7 @@
                 document.getElementById('log-out').innerText = '--:--'; 
                 document.getElementById('meal-box').style.display = 'none';
                 document.getElementById('work-timer').classList.remove('blinking-red');
+                document.getElementById('meal-timer').classList.remove('blinking-green');
             }
             document.getElementById('status').innerText = status;
         }
