@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Time Tracker</title>
+    <title>Time Tracker with Alarm</title>
     
     <link rel="apple-touch-icon" href="https://img.icons8.com/fluency/180/clock.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -20,26 +20,19 @@
             transition: background-color 0.4s ease;
         }
         .card { background: white; width: 100%; max-width: 400px; padding: 25px; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 20px; text-align: center; overflow: hidden; }
-        
-        /* 폰트 및 애니메이션 기본 설정 */
-        .clock { font-size: 45px; font-weight: 800; margin: 15px 0; font-variant-numeric: tabular-nums; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .clock { font-size: 45px; font-weight: 800; margin: 15px 0; font-variant-numeric: tabular-nums; transition: all 0.4s ease; }
         .status { font-weight: bold; color: #1A73E8; margin-bottom: 25px; font-size: 18px; text-transform: uppercase; letter-spacing: 1px; }
-        
-        .timer-box { background: #F8F9FA; padding: 15px; border-radius: 20px; margin-top: 12px; border: 1px solid #eee; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .timer-box { background: #F8F9FA; padding: 15px; border-radius: 20px; margin-top: 12px; border: 1px solid #eee; transition: all 0.4s ease; }
         .timer-label { font-size: 11px; color: #999; font-weight: 800; letter-spacing: 1px; margin-bottom: 5px; }
-        .timer-value { font-size: 30px; font-weight: bold; color: #4285F4; font-family: 'Courier New', Courier, monospace; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .timer-value { font-size: 30px; font-weight: bold; color: #4285F4; font-family: 'Courier New', Courier, monospace; transition: all 0.4s ease; }
 
-        /* [상태별 강조 스타일] */
-        /* 1. WORKING 상태: Work 타이머 최대화, 메인 시계 최소화 */
-        body.is-working .clock { font-size: 24px; color: #BBB; margin: 5px 0; }
-        body.is-working #work-box { background: #E8F0FE; border-color: #D2E3FC; padding: 30px 15px; transform: scale(1.02); }
+        /* 상태별 스타일 */
+        body.is-working .clock { font-size: 24px; color: #BBB; }
+        body.is-working #work-box { background: #E8F0FE; padding: 30px 15px; transform: scale(1.02); }
         body.is-working #work-timer { font-size: 52px; color: #1A73E8; }
-
-        /* 2. MEAL 상태: Meal 타이머 최대화, 나머지 모두 최소화 */
         body.is-meal .clock { font-size: 20px; color: #DDD; }
-        body.is-meal #work-box { opacity: 0.4; transform: scale(0.9); padding: 10px; }
-        body.is-meal #work-timer { font-size: 20px; }
-        body.is-meal #meal-box { background: #FFF4D1; border-color: #FFE082; padding: 30px 15px; transform: scale(1.02); }
+        body.is-meal #work-box { opacity: 0.4; transform: scale(0.9); }
+        body.is-meal #meal-box { background: #FFF4D1; padding: 30px 15px; transform: scale(1.02); }
         body.is-meal #meal-timer { font-size: 52px; color: #F29900; }
 
         /* 깜빡임 애니메이션 */
@@ -63,7 +56,6 @@
         <div id="date" style="color: #999; font-weight: 600;"></div>
         <div id="clock" class="clock">00:00:00</div>
         <div id="status" class="status">IDLE</div>
-        
         <div id="work-box" class="timer-box">
             <div class="timer-label">WORK DURATION</div>
             <div id="work-timer" class="timer-value">00:00:00</div>
@@ -73,9 +65,7 @@
             <div id="meal-timer" class="timer-value" style="color: #F29900;">00:00:00</div>
         </div>
     </div>
-
     <div id="buttons" style="width: 100%; max-width: 400px;"></div>
-
     <div class="card history">
         <strong>Today's Log</strong>
         <div class="history-item"><span>IN</span> <span id="log-in" style="font-weight:700;">--:--</span></div>
@@ -86,22 +76,30 @@
     <script>
         let status = 'IDLE';
         let logs = { in: null, mealS: null, mealE: null, out: null };
+        let audioCtx = null;
+
+        // 알람 소리 생성 함수 (Beep음)
+        function playAlarmSound(frequency = 440) {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime); // 볼륨 조절
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.2); // 0.2초 동안 재생
+        }
 
         function update() {
             const now = new Date();
             document.getElementById('clock').innerText = now.toLocaleTimeString('en-GB');
             document.getElementById('date').innerText = now.toLocaleDateString('en-US', {weekday:'long', month:'short', day:'numeric'});
             
-            // [폰트 크기 제어용 클래스 부여]
-            if (status === 'WORKING') {
-                document.body.classList.add('is-working');
-                document.body.classList.remove('is-meal');
-            } else if (status === 'MEAL') {
-                document.body.classList.add('is-meal');
-                document.body.classList.remove('is-working');
-            } else {
-                document.body.classList.remove('is-working', 'is-meal');
-            }
+            if (status === 'WORKING') document.body.className = 'is-working';
+            else if (status === 'MEAL') document.body.className = 'is-meal';
+            else document.body.className = '';
 
             if (status !== 'IDLE') {
                 const workMs = getWorkMs(now);
@@ -113,6 +111,7 @@
                 
                 if (status === 'WORKING' && !logs.mealS && isWorkRange) {
                     workTimerElem.classList.add('blinking-red');
+                    if (now.getSeconds() % 2 === 0) playAlarmSound(660); // 2초마다 알람
                 } else {
                     workTimerElem.classList.remove('blinking-red');
                 }
@@ -125,6 +124,7 @@
                     
                     if (status === 'MEAL' && (mealMs/60000) >= 30) {
                         mealTimerElem.classList.add('blinking-green');
+                        if (now.getSeconds() % 2 === 0) playAlarmSound(880); // 2초마다 알람 (식사는 좀 더 높은 음)
                     } else {
                         mealTimerElem.classList.remove('blinking-green');
                     }
@@ -149,33 +149,16 @@
         function formatTime(date) { return date.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', hour12:false}); }
 
         function handleAction(type) {
+            // 사운드 재생 권한 활성화 (첫 클릭 시)
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            
             const time = new Date();
             const timeStr = formatTime(time);
-            if (type === 'IN') { 
-                logs.in = time; status = 'WORKING'; 
-                document.getElementById('log-in').innerText = timeStr; 
-            }
-            else if (type === 'MS') { 
-                logs.mealS = time; status = 'MEAL'; 
-                document.getElementById('log-meal').innerText = `${timeStr} - --:--`;
-            }
-            else if (type === 'ME') { 
-                logs.mealE = time; status = 'WORKING'; 
-                document.getElementById('log-meal').innerText = `${formatTime(new Date(logs.mealS))} - ${timeStr}`;
-                document.getElementById('meal-timer').classList.remove('blinking-green');
-            }
-            else if (type === 'OUT') { 
-                logs.out = time; status = 'DONE'; 
-                document.getElementById('log-out').innerText = timeStr; 
-            }
-            else if (type === 'RESET') { 
-                status = 'IDLE'; logs = { in: null, mealS: null, mealE: null, out: null };
-                document.getElementById('log-in').innerText = '--:--';
-                document.getElementById('log-meal').innerText = '--:--';
-                document.getElementById('log-out').innerText = '--:--';
-                document.getElementById('meal-box').style.display = 'none';
-                document.body.classList.remove('is-working', 'is-meal');
-            }
+            if (type === 'IN') { logs.in = time; status = 'WORKING'; document.getElementById('log-in').innerText = timeStr; }
+            else if (type === 'MS') { logs.mealS = time; status = 'MEAL'; document.getElementById('log-meal').innerText = `${timeStr} - --:--`; }
+            else if (type === 'ME') { logs.mealE = time; status = 'WORKING'; document.getElementById('log-meal').innerText = `${formatTime(new Date(logs.mealS))} - ${timeStr}`; }
+            else if (type === 'OUT') { logs.out = time; status = 'DONE'; document.getElementById('log-out').innerText = timeStr; }
+            else if (type === 'RESET') { location.reload(); }
             document.getElementById('status').innerText = status;
         }
 
