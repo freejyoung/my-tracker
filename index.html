@@ -14,37 +14,41 @@
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
             background-color: #F0F2F5; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
+            display: flex; flex-direction: column; align-items: center; 
             padding: env(safe-area-inset-top) 20px 20px 20px; 
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
+            user-select: none; -webkit-tap-highlight-color: transparent;
+            transition: background-color 0.4s ease;
         }
-        .card { background: white; width: 100%; max-width: 400px; padding: 25px; border-radius: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 20px; text-align: center; }
-        .clock { font-size: 45px; font-weight: 800; margin: 15px 0; font-variant-numeric: tabular-nums; letter-spacing: -1px; }
-        .status { font-weight: bold; color: #1A73E8; margin-bottom: 25px; font-size: 20px; text-transform: uppercase; }
+        .card { background: white; width: 100%; max-width: 400px; padding: 25px; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 20px; text-align: center; overflow: hidden; }
         
-        .timer-box { background: #F8F9FA; padding: 15px; border-radius: 18px; margin-top: 12px; border: 1px solid #eee; }
+        /* 폰트 및 애니메이션 기본 설정 */
+        .clock { font-size: 45px; font-weight: 800; margin: 15px 0; font-variant-numeric: tabular-nums; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .status { font-weight: bold; color: #1A73E8; margin-bottom: 25px; font-size: 18px; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .timer-box { background: #F8F9FA; padding: 15px; border-radius: 20px; margin-top: 12px; border: 1px solid #eee; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         .timer-label { font-size: 11px; color: #999; font-weight: 800; letter-spacing: 1px; margin-bottom: 5px; }
-        .timer-value { font-size: 30px; font-weight: bold; color: #4285F4; font-family: 'Courier New', Courier, monospace; }
+        .timer-value { font-size: 30px; font-weight: bold; color: #4285F4; font-family: 'Courier New', Courier, monospace; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
 
-        /* 애니메이션 정의 */
-        @keyframes blink-red {
-            0% { color: #EA4335; opacity: 1; }
-            50% { color: #EA4335; opacity: 0.3; }
-            100% { color: #EA4335; opacity: 1; }
-        }
-        @keyframes blink-green {
-            0% { color: #34A853; opacity: 1; }
-            50% { color: #34A853; opacity: 0.3; }
-            100% { color: #34A853; opacity: 1; }
-        }
-        
-        .blinking-red { animation: blink-red 0.8s infinite; }
-        .blinking-green { animation: blink-green 0.8s infinite; }
+        /* [상태별 강조 스타일] */
+        /* 1. WORKING 상태: Work 타이머 최대화, 메인 시계 최소화 */
+        body.is-working .clock { font-size: 24px; color: #BBB; margin: 5px 0; }
+        body.is-working #work-box { background: #E8F0FE; border-color: #D2E3FC; padding: 30px 15px; transform: scale(1.02); }
+        body.is-working #work-timer { font-size: 52px; color: #1A73E8; }
 
-        button { width: 100%; padding: 20px; margin: 8px 0; border: none; border-radius: 20px; color: white; font-size: 19px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        /* 2. MEAL 상태: Meal 타이머 최대화, 나머지 모두 최소화 */
+        body.is-meal .clock { font-size: 20px; color: #DDD; }
+        body.is-meal #work-box { opacity: 0.4; transform: scale(0.9); padding: 10px; }
+        body.is-meal #work-timer { font-size: 20px; }
+        body.is-meal #meal-box { background: #FFF4D1; border-color: #FFE082; padding: 30px 15px; transform: scale(1.02); }
+        body.is-meal #meal-timer { font-size: 52px; color: #F29900; }
+
+        /* 깜빡임 애니메이션 */
+        @keyframes blink-red { 0% { color: #EA4335; opacity: 1; } 50% { color: #EA4335; opacity: 0.3; } 100% { color: #EA4335; opacity: 1; } }
+        @keyframes blink-green { 0% { color: #34A853; opacity: 1; } 50% { color: #34A853; opacity: 0.3; } 100% { color: #34A853; opacity: 1; } }
+        .blinking-red { animation: blink-red 0.8s infinite !important; }
+        .blinking-green { animation: blink-green 0.8s infinite !important; }
+
+        button { width: 100%; max-width: 400px; padding: 20px; margin: 8px 0; border: none; border-radius: 20px; color: white; font-size: 19px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .in { background: linear-gradient(135deg, #34A853, #2D8E47); }
         .meal { background: linear-gradient(135deg, #FBBC05, #F29900); }
         .out { background: linear-gradient(135deg, #EA4335, #C5392F); }
@@ -52,7 +56,6 @@
         
         .history { text-align: left; font-size: 15px; }
         .history-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #F0F0F0; }
-        .history-item:last-child { border-bottom: none; }
     </style>
 </head>
 <body>
@@ -61,11 +64,11 @@
         <div id="clock" class="clock">00:00:00</div>
         <div id="status" class="status">IDLE</div>
         
-        <div class="timer-box">
+        <div id="work-box" class="timer-box">
             <div class="timer-label">WORK DURATION</div>
             <div id="work-timer" class="timer-value">00:00:00</div>
         </div>
-        <div id="meal-box" class="timer-box" style="display:none; background-color: #FFF9E6; border-color: #FFE082;">
+        <div id="meal-box" class="timer-box" style="display:none;">
             <div class="timer-label" style="color: #F29900;">MEAL DURATION</div>
             <div id="meal-timer" class="timer-value" style="color: #F29900;">00:00:00</div>
         </div>
@@ -74,7 +77,7 @@
     <div id="buttons" style="width: 100%; max-width: 400px;"></div>
 
     <div class="card history">
-        <strong style="font-size: 16px; color: #333;">Today's Log</strong>
+        <strong>Today's Log</strong>
         <div class="history-item"><span>IN</span> <span id="log-in" style="font-weight:700;">--:--</span></div>
         <div class="history-item"><span>MEAL</span> <span id="log-meal" style="font-weight:700;">--:--</span></div>
         <div class="history-item"><span>OUT</span> <span id="log-out" style="font-weight:700;">--:--</span></div>
@@ -89,30 +92,38 @@
             document.getElementById('clock').innerText = now.toLocaleTimeString('en-GB');
             document.getElementById('date').innerText = now.toLocaleDateString('en-US', {weekday:'long', month:'short', day:'numeric'});
             
+            // [폰트 크기 제어용 클래스 부여]
+            if (status === 'WORKING') {
+                document.body.classList.add('is-working');
+                document.body.classList.remove('is-meal');
+            } else if (status === 'MEAL') {
+                document.body.classList.add('is-meal');
+                document.body.classList.remove('is-working');
+            } else {
+                document.body.classList.remove('is-working', 'is-meal');
+            }
+
             if (status !== 'IDLE') {
-                // 1. 업무 시간 로직 (4:30~4:59 / 7:50~8:00 빨간색 깜빡임)
                 const workMs = getWorkMs(now);
                 const workTimerElem = document.getElementById('work-timer');
                 workTimerElem.innerText = formatDiff(workMs);
                 
                 const workMins = workMs / 60000;
-                const isWorkTarget = (workMins >= 270 && workMins < 300) || (workMins >= 470 && workMins <= 480);
+                const isWorkRange = (workMins >= 270 && workMins < 300) || (workMins >= 470 && workMins <= 480);
                 
-                if (status === 'WORKING' && isWorkTarget) {
+                if (status === 'WORKING' && !logs.mealS && isWorkRange) {
                     workTimerElem.classList.add('blinking-red');
                 } else {
                     workTimerElem.classList.remove('blinking-red');
                 }
 
-                // 2. 식사 시간 로직 (30분 초과 시 초록색 깜빡임)
                 if (status === 'MEAL' || (logs.mealS && logs.mealE)) {
                     document.getElementById('meal-box').style.display = 'block';
                     const mealMs = getMealMs(now);
                     const mealTimerElem = document.getElementById('meal-timer');
                     mealTimerElem.innerText = formatDiff(mealMs);
                     
-                    const mealMins = mealMs / 60000;
-                    if (status === 'MEAL' && mealMins >= 30) {
+                    if (status === 'MEAL' && (mealMs/60000) >= 30) {
                         mealTimerElem.classList.add('blinking-green');
                     } else {
                         mealTimerElem.classList.remove('blinking-green');
@@ -127,12 +138,7 @@
             let mealDiff = (logs.mealS && logs.mealE) ? (new Date(logs.mealE) - new Date(logs.mealS)) : 0;
             return (new Date(end) - new Date(logs.in)) - mealDiff;
         }
-
-        function getMealMs(now) {
-            let end = (logs.mealE) ? new Date(logs.mealE) : now;
-            return new Date(end) - new Date(logs.mealS);
-        }
-
+        function getMealMs(now) { let end = (logs.mealE) ? new Date(logs.mealE) : now; return new Date(end) - new Date(logs.mealS); }
         function formatDiff(ms) {
             if (ms < 0) ms = 0;
             const h = Math.floor(ms / 3600000).toString().padStart(2, '0');
@@ -140,21 +146,22 @@
             const s = Math.floor((ms % 60000) / 1000).toString().padStart(2, '0');
             return `${h}:${m}:${s}`;
         }
+        function formatTime(date) { return date.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', hour12:false}); }
 
         function handleAction(type) {
             const time = new Date();
-            const timeStr = time.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', hour12:false});
-            
+            const timeStr = formatTime(time);
             if (type === 'IN') { 
                 logs.in = time; status = 'WORKING'; 
                 document.getElementById('log-in').innerText = timeStr; 
             }
             else if (type === 'MS') { 
                 logs.mealS = time; status = 'MEAL'; 
+                document.getElementById('log-meal').innerText = `${timeStr} - --:--`;
             }
             else if (type === 'ME') { 
                 logs.mealE = time; status = 'WORKING'; 
-                document.getElementById('log-meal').innerText = `${new Date(logs.mealS).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', hour12:false})} - ${timeStr}`; 
+                document.getElementById('log-meal').innerText = `${formatTime(new Date(logs.mealS))} - ${timeStr}`;
                 document.getElementById('meal-timer').classList.remove('blinking-green');
             }
             else if (type === 'OUT') { 
@@ -162,13 +169,12 @@
                 document.getElementById('log-out').innerText = timeStr; 
             }
             else if (type === 'RESET') { 
-                status = 'IDLE'; logs = { in: null, mealS: null, mealE: null, out: null }; 
-                document.getElementById('log-in').innerText = '--:--'; 
-                document.getElementById('log-meal').innerText = '--:--'; 
-                document.getElementById('log-out').innerText = '--:--'; 
+                status = 'IDLE'; logs = { in: null, mealS: null, mealE: null, out: null };
+                document.getElementById('log-in').innerText = '--:--';
+                document.getElementById('log-meal').innerText = '--:--';
+                document.getElementById('log-out').innerText = '--:--';
                 document.getElementById('meal-box').style.display = 'none';
-                document.getElementById('work-timer').classList.remove('blinking-red');
-                document.getElementById('meal-timer').classList.remove('blinking-green');
+                document.body.classList.remove('is-working', 'is-meal');
             }
             document.getElementById('status').innerText = status;
         }
@@ -176,13 +182,12 @@
         function renderButtons() {
             const container = document.getElementById('buttons');
             let html = '';
-            if (status === 'IDLE') html = `<button class="in" onclick="handleAction('IN')">CLOCK-IN</button>`;
-            else if (status === 'WORKING') html = `<button class="meal" onclick="handleAction('MS')">MEAL START</button><button class="out" onclick="handleAction('OUT')">CLOCK-OUT</button>`;
-            else if (status === 'MEAL') html = `<button class="meal" onclick="handleAction('ME')">MEAL END</button><button class="out" onclick="handleAction('OUT')">CLOCK-OUT</button>`;
-            else if (status === 'DONE') html = `<button class="reset" onclick="handleAction('RESET')">NEW LOG</button>`;
+            if (status === 'IDLE') html = '<button class="in" onclick="handleAction(\'IN\')">CLOCK-IN</button>';
+            else if (status === 'WORKING') html = '<button class="meal" onclick="handleAction(\'MS\')">MEAL START</button><button class="out" onclick="handleAction(\'OUT\')">CLOCK-OUT</button>';
+            else if (status === 'MEAL') html = '<button class="meal" onclick="handleAction(\'ME\')">MEAL END</button><button class="out" onclick="handleAction(\'OUT\')">CLOCK-OUT</button>';
+            else if (status === 'DONE') html = '<button class="reset" onclick="handleAction(\'RESET\')">NEW LOG</button>';
             container.innerHTML = html;
         }
-
         setInterval(update, 1000);
         update();
     </script>
