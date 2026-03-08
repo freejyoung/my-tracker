@@ -10,23 +10,15 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
     <style>
-        /* 한 화면 구성을 위한 레이아웃 설정 */
+        /* [레이아웃] 한 화면 구성 및 스크롤 방지 */
         * { box-sizing: border-box; }
-        html, body { 
-            height: 100%; 
-            margin: 0; 
-            padding: 0; 
-            overflow: hidden; /* 스크롤 방지 */
-        }
+        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; }
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
             background-color: #F0F2F5; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
+            display: flex; flex-direction: column; align-items: center; 
             padding: env(safe-area-inset-top) 15px env(safe-area-inset-bottom) 15px; 
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
+            user-select: none; -webkit-tap-highlight-color: transparent;
         }
 
         /* 헤더 섹션 */
@@ -44,17 +36,15 @@
         input:checked + .slider:before { transform: translateX(18px); }
         .app-subtitle { font-size: 11px; color: #70757A; width: 100%; max-width: 400px; margin-bottom: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* 메인 카드 (유동적 크기) */
+        /* 메인 카드 */
         .card { 
             background: white; width: 100%; max-width: 400px; 
             padding: 20px; border-radius: 25px; 
             box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
-            margin-bottom: 10px; text-align: center;
-            flex-shrink: 1; /* 화면이 작으면 줄어듦 */
+            margin-bottom: 10px; text-align: center; flex-shrink: 1;
         }
         .clock { font-size: clamp(30px, 10vw, 45px); font-weight: 800; margin: 10px 0; font-variant-numeric: tabular-nums; }
         .status { font-weight: bold; color: #1A73E8; margin-bottom: 15px; font-size: 16px; text-transform: uppercase; }
-        
         .timer-box { background: #F8F9FA; padding: 12px; border-radius: 18px; margin-top: 8px; border: 1px solid #eee; transition: all 0.4s ease; }
         .timer-label { font-size: 10px; color: #999; font-weight: 800; margin-bottom: 4px; }
         .timer-value { font-size: clamp(24px, 8vw, 32px); font-weight: bold; color: #4285F4; font-family: monospace; }
@@ -67,15 +57,14 @@
         .out { background: linear-gradient(135deg, #EA4335, #C5392F); }
         .reset { background: #5F6368; }
 
-        /* 히스토리 섹션 (하단 고정 및 크기 조절) */
+        /* 히스토리 섹션 */
         .history { 
             background: white; width: 100%; max-width: 400px; 
             padding: 15px 20px; border-radius: 25px; 
             font-size: 14px; box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            margin-bottom: env(safe-area-inset-bottom);
+            margin-top: auto; margin-bottom: env(safe-area-inset-bottom);
         }
         .history-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #F0F0F0; }
-        .history-item:last-child { border-bottom: none; }
 
         /* 경고 오버레이 */
         #scan-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); display: flex; justify-content: center; align-items: center; z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
@@ -86,7 +75,7 @@
         .warning-subtext { color: #3C4043; font-size: 14px; line-height: 1.4; font-weight: 700; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
 
-        /* 애니메이션 */
+        /* 애니메이션 효과 */
         body.is-working #work-box { background: #E8F0FE; padding: 20px 15px; }
         body.is-working #work-timer { font-size: clamp(32px, 12vw, 48px); color: #1A73E8; }
         body.is-meal #meal-box { background: #FFF4D1; padding: 20px 15px; }
@@ -133,7 +122,7 @@
 
     <div id="buttons"></div>
 
-    <div class="card history" style="margin-top: auto;">
+    <div class="card history">
         <strong style="display:block; margin-bottom:5px;">Today's Log</strong>
         <div class="history-item"><span>IN</span> <span id="log-in" style="font-weight:700;">--:--</span></div>
         <div class="history-item"><span>MEAL</span> <span id="log-meal" style="font-weight:700;">--:--</span></div>
@@ -223,15 +212,21 @@
         function formatTime(date) { return date.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', hour12:false}); }
 
         function handleAction(type) {
-            triggerStrongWarning();
+            // [수정] RESET 클릭 시 경고 없이 바로 실행
+            if (type !== 'RESET') {
+                triggerStrongWarning();
+            }
+
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             const time = new Date();
             const timeStr = formatTime(time);
+            
             if (type === 'IN') { logs.in = time; status = 'WORKING'; document.getElementById('log-in').innerText = timeStr; }
             else if (type === 'MS') { logs.mealS = time; status = 'MEAL'; document.getElementById('log-meal').innerText = `${timeStr} - --:--`; }
             else if (type === 'ME') { logs.mealE = time; status = 'WORKING'; document.getElementById('log-meal').innerText = `${formatTime(new Date(logs.mealS))} - ${timeStr}`; }
             else if (type === 'OUT') { logs.out = time; status = 'DONE'; document.getElementById('log-out').innerText = timeStr; }
             else if (type === 'RESET') { location.reload(); }
+            
             document.getElementById('status').innerText = status;
         }
 
