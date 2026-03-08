@@ -26,7 +26,18 @@
             display: flex; justify-content: space-between; align-items: center;
             width: 100%; max-width: 400px; padding-top: 10px;
         }
+        .title-wrapper { display: flex; align-items: center; gap: 10px; }
         .app-title { font-size: 24px; font-weight: 900; color: #3C4043; letter-spacing: -0.5px; }
+        
+        /* [Moved] Help Button next to Title */
+        .help-btn {
+            width: 22px; height: 22px; background: #5F6368;
+            border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            font-weight: 900; color: white; cursor: pointer; font-size: 13px;
+            transition: opacity 0.2s;
+        }
+        .help-btn:active { opacity: 0.6; }
+
         .switch-container { display: flex; align-items: center; gap: 8px; }
         .switch { position: relative; display: inline-block; width: 40px; height: 22px; }
         .switch input { opacity: 0; width: 0; height: 0; }
@@ -57,9 +68,9 @@
         .out { background: linear-gradient(135deg, #EA4335, #C5392F); }
         .reset { background: #5F6368; }
 
-        /* History & Help Footer */
+        /* History Section */
         .footer-container {
-            width: 100%; max-width: 400px; position: relative;
+            width: 100%; max-width: 400px;
             margin-top: auto; margin-bottom: env(safe-area-inset-bottom);
         }
         .history { 
@@ -69,16 +80,7 @@
         .history-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #F0F0F0; }
         .history-item:last-child { border-bottom: none; }
         
-        /* Help Button (?) */
-        .help-btn {
-            position: absolute; right: 15px; top: -45px;
-            width: 32px; height: 32px; background: white;
-            border-radius: 50%; display: flex; justify-content: center; align-items: center;
-            font-weight: 900; color: #5F6368; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            cursor: pointer; font-size: 16px;
-        }
-
-        /* Modals (General) */
+        /* Modals */
         .modal-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0, 0, 0, 0.85); display: flex; justify-content: center; 
@@ -86,8 +88,8 @@
         }
         .modal-overlay.show { opacity: 1; pointer-events: auto; }
         .modal-content { 
-            background: white; padding: 30px; border-radius: 30px; 
-            text-align: center; width: 85%; max-width: 350px; 
+            background: white; padding: 25px; border-radius: 30px; 
+            text-align: center; width: 88%; max-width: 360px; 
             transform: scale(0.5); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.2); 
         }
         .modal-overlay.show .modal-content { transform: scale(1); }
@@ -98,11 +100,13 @@
         @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
         .shake-anim { animation: shake 0.5s; }
 
-        /* Help Modal Styles */
-        .help-title { font-size: 20px; font-weight: 800; color: #1A73E8; margin-bottom: 15px; }
-        .help-body { text-align: left; font-size: 13px; line-height: 1.6; color: #3C4043; }
+        /* [Update] Expanded Help Modal Styles */
+        .help-title { font-size: 20px; font-weight: 800; color: #1A73E8; margin-bottom: 15px; border-bottom: 2px solid #E8F0FE; padding-bottom: 10px; }
+        .help-body { text-align: left; font-size: 13px; line-height: 1.5; color: #3C4043; overflow-y: auto; max-height: 60vh; }
+        .help-section { margin-bottom: 15px; }
+        .help-section-title { font-weight: 800; color: #5F6368; font-size: 11px; text-transform: uppercase; margin-bottom: 5px; display: block; }
         .help-body b { color: #1A73E8; }
-        .close-btn { margin-top: 20px; background: #f0f0f0; color: #5F6368; padding: 10px 20px; border-radius: 15px; font-weight: 700; display: inline-block; cursor: pointer; }
+        .close-btn { margin-top: 20px; background: #1A73E8; color: white; padding: 12px 30px; border-radius: 15px; font-weight: 700; display: inline-block; cursor: pointer; }
 
         /* Animation */
         @keyframes blink-red { 0%, 100% { color: #EA4335; opacity: 1; } 50% { opacity: 0.3; } }
@@ -115,26 +119,46 @@
     <div id="scan-overlay" class="modal-overlay">
         <div class="modal-content" id="warning-box">
             <span class="warning-text">⚠️ SCAN FIRST</span>
-            <div class="warning-subtext">Scan your Badge at the Time Clicking before Clicking</div>
+            <div class="warning-subtext">Scan your Badge at the physical Time Clock<br><b>BEFORE</b> clicking this button.</div>
         </div>
     </div>
 
     <div id="help-overlay" class="modal-overlay" onclick="toggleHelp(false)">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="help-title">How to Use</div>
+            <div class="help-title">User Manual</div>
             <div class="help-body">
-                1. <b>Clock-In:</b> Start your workday.<br>
-                2. <b>Meal Start/End:</b> Record your 30min break.<br>
-                3. <b>Clock-Out:</b> Finish your day.<br><br>
-                • <b>⚠️ Warning:</b> Reminds you to scan your physical badge <b>before</b> clicking buttons.<br>
-                • <b>🚨 Alerts:</b> Timer blinks when you reach 4.5h (Meal) or 8h (Finish).
+                <div class="help-section">
+                    <span class="help-section-title">Essential Workflow</span>
+                    • <b>Clock-In:</b> Records your shift start time.<br>
+                    • <b>Meal Start:</b> Start of your 30-min break.<br>
+                    • <b>Meal End:</b> Resumes your work timer.<br>
+                    • <b>Clock-Out:</b> Finalizes your daily work hours.
+                </div>
+                <div class="help-section">
+                    <span class="help-section-title">Critical Rule</span>
+                    • <b>Scan First:</b> This app is a <u>personal tracker</u>. You must always scan your physical badge at the company terminal first, then press the button here.
+                </div>
+                <div class="help-section">
+                    <span class="help-section-title">Smart Alerts</span>
+                    • <b>Meal Reminder:</b> Work timer blinks <b>RED</b> at 4h 30m. It's time to take a meal break!<br>
+                    • <b>Break Complete:</b> Meal timer blinks <b>GREEN</b> after 30 mins.<br>
+                    • <b>Daily Target:</b> Work timer blinks <b>RED</b> at 7h 50m as you approach 8 hours.
+                </div>
+                <div class="help-section">
+                    <span class="help-section-title">Controls</span>
+                    • <b>Alarm Toggle:</b> Turn off sound/popups in quiet areas.<br>
+                    • <b>New Log:</b> Resets everything for a new day.
+                </div>
             </div>
             <div class="close-btn" onclick="toggleHelp(false)">Got it!</div>
         </div>
     </div>
 
     <div class="header-container">
-        <div class="app-title">Scan & Click</div>
+        <div class="title-wrapper">
+            <div class="app-title">Scan & Click</div>
+            <div class="help-btn" onclick="toggleHelp(true)">?</div>
+        </div>
         <div class="switch-container">
             <span style="font-size:10px; font-weight:800; color:#5F6368;">ALARM</span>
             <label class="switch">
@@ -162,127 +186,13 @@
     <div id="buttons"></div>
 
     <div class="footer-container">
-        <div class="help-btn" onclick="toggleHelp(true)">?</div>
         <div class="card history">
             <strong style="display:block; margin-bottom:5px;">Today's Log</strong>
             <div class="history-item"><span>IN</span> <span id="log-in" style="font-weight:700;">--:--</span></div>
             <div class="history-item"><span>MEAL</span> <span id="log-meal" style="font-weight:700;">--:--</span></div>
-            <div class="history-item"><span>OUT</span> <span id="log-out" style="font-weight:700;">--:--</span></div>
+            <div class="history-item) history-item"><span>OUT</span> <span id="log-out" style="font-weight:700;">--:--</span></div>
         </div>
     </div>
 
     <script>
-        let status = 'IDLE';
-        let logs = { in: null, mealS: null, mealE: null, out: null };
-        let audioCtx = null;
-        let overlayTimeout = null;
-
-        function toggleHelp(show) {
-            document.getElementById('help-overlay').classList.toggle('show', show);
-        }
-
-        function triggerStrongWarning() {
-            if (!document.getElementById('master-alarm-toggle').checked) return;
-            const overlay = document.getElementById('scan-overlay');
-            const box = document.getElementById('warning-box');
-            overlay.classList.add('show');
-            box.classList.add('shake-anim');
-            playAlertTone(100, 0.25); 
-            
-            if (overlayTimeout) clearTimeout(overlayTimeout);
-            overlayTimeout = setTimeout(() => {
-                overlay.classList.remove('show');
-                box.classList.remove('shake-anim');
-            }, 1700);
-        }
-
-        function playAlertTone(freq, dur) {
-            if (!document.getElementById('master-alarm-toggle').checked) return;
-            try {
-                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + dur);
-            } catch(e) {}
-        }
-
-        function update() {
-            const now = new Date();
-            document.getElementById('clock').innerText = now.toLocaleTimeString('en-GB');
-            document.getElementById('date').innerText = now.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'});
-            
-            if (status !== 'IDLE') {
-                const workMs = getWorkMs(now);
-                document.getElementById('work-timer').innerText = formatDiff(workMs);
-                const isWorkRange = (workMs/60000 >= 270 && workMs/60000 < 300) || (workMs/60000 >= 470 && workMs/60000 <= 480);
-                const alarmEnabled = document.getElementById('master-alarm-toggle').checked;
-
-                if (status === 'WORKING' && !logs.mealS && isWorkRange && alarmEnabled) {
-                    document.getElementById('work-timer').classList.add('blinking-red');
-                    if (now.getSeconds() % 2 === 0) playAlertTone(660, 0.2);
-                } else {
-                    document.getElementById('work-timer').classList.remove('blinking-red');
-                }
-
-                if (status === 'MEAL' || (logs.mealS && logs.mealE)) {
-                    document.getElementById('meal-box').style.display = 'block';
-                    const mealMs = getMealMs(now);
-                    document.getElementById('meal-timer').innerText = formatDiff(mealMs);
-                    if (status === 'MEAL' && (mealMs/60000) >= 30 && alarmEnabled) {
-                        document.getElementById('meal-timer').classList.add('blinking-green');
-                        if (now.getSeconds() % 2 === 0) playAlertTone(880, 0.2);
-                    } else {
-                        document.getElementById('meal-timer').classList.remove('blinking-green');
-                    }
-                }
-            }
-            renderButtons();
-        }
-
-        function getWorkMs(now) {
-            let end = (status === 'DONE') ? new Date(logs.out) : (status === 'MEAL') ? new Date(logs.mealS) : now;
-            let mealDiff = (logs.mealS && logs.mealE) ? (new Date(logs.mealE) - new Date(logs.mealS)) : 0;
-            return (new Date(end) - new Date(logs.in)) - mealDiff;
-        }
-        function getMealMs(now) { let end = (logs.mealE) ? new Date(logs.mealE) : now; return new Date(end) - new Date(logs.mealS); }
-        function formatDiff(ms) {
-            const h = Math.floor(ms / 3600000).toString().padStart(2, '0');
-            const m = Math.floor((ms % 3600000) / 60000).toString().padStart(2, '0');
-            const s = Math.floor((ms % 60000) / 1000).toString().padStart(2, '0');
-            return `${h}:${m}:${s}`;
-        }
-        function formatTime(date) { return date.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', hour12:false}); }
-
-        function handleAction(type) {
-            if (type !== 'RESET') triggerStrongWarning();
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            const time = new Date();
-            const timeStr = formatTime(time);
-            if (type === 'IN') { logs.in = time; status = 'WORKING'; document.getElementById('log-in').innerText = timeStr; }
-            else if (type === 'MS') { logs.mealS = time; status = 'MEAL'; document.getElementById('log-meal').innerText = `${timeStr} - --:--`; }
-            else if (type === 'ME') { logs.mealE = time; status = 'WORKING'; document.getElementById('log-meal').innerText = `${formatTime(new Date(logs.mealS))} - ${timeStr}`; }
-            else if (type === 'OUT') { logs.out = time; status = 'DONE'; document.getElementById('log-out').innerText = timeStr; }
-            else if (type === 'RESET') location.reload();
-            document.getElementById('status').innerText = status;
-        }
-
-        function renderButtons() {
-            const container = document.getElementById('buttons');
-            let html = '';
-            if (status === 'IDLE') html = '<button class="in" onclick="handleAction(\'IN\')">CLOCK-IN</button>';
-            else if (status === 'WORKING') html = '<button class="meal" onclick="handleAction(\'MS\')">MEAL START</button><button class="out" onclick="handleAction(\'OUT\')">CLOCK-OUT</button>';
-            else if (status === 'MEAL') html = '<button class="meal" onclick="handleAction(\'ME\')">MEAL END</button><button class="out" onclick="handleAction(\'OUT\')">CLOCK-OUT</button>';
-            else if (status === 'DONE') html = '<button class="reset" onclick="handleAction(\'RESET\')">NEW LOG</button>';
-            container.innerHTML = html;
-        }
-        setInterval(update, 1000);
-        update();
-    </script>
-</body>
-</html>
+        let status
