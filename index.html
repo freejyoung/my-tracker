@@ -16,110 +16,93 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
             background-color: #F0F2F5; 
             display: flex; flex-direction: column; align-items: center; 
-            /* 여백 최적화: 상단은 기기 세이프 영역, 좌우는 최소 15px */
-            padding: env(safe-area-inset-top) 15px env(safe-area-inset-bottom) 15px; 
+            /* 상단 여백 최소화 */
+            padding: calc(env(safe-area-inset-top) + 5px) 15px env(safe-area-inset-bottom) 15px; 
             user-select: none; -webkit-tap-highlight-color: transparent;
         }
 
-        /* Header Section */
+        /* Header Section - 높이 축소 */
         .header-container {
             display: flex; justify-content: space-between; align-items: center;
-            width: 100%; max-width: 400px; padding-top: 10px; flex-shrink: 0;
+            width: 100%; max-width: 400px; flex-shrink: 0;
         }
-        .title-wrapper { display: flex; align-items: center; gap: 8px; }
-        .app-title { font-size: 24px; font-weight: 900; color: #3C4043; letter-spacing: -0.5px; }
+        .title-wrapper { display: flex; align-items: center; gap: 6px; }
+        .app-title { font-size: 20px; font-weight: 900; color: #3C4043; letter-spacing: -0.5px; }
         
         .help-btn {
-            width: 20px; height: 20px; background: #5F6368;
+            width: 18px; height: 18px; background: #5F6368;
             border-radius: 50%; display: flex; justify-content: center; align-items: center;
-            font-weight: 900; color: white; cursor: pointer; font-size: 12px;
+            font-weight: 900; color: white; cursor: pointer; font-size: 10px;
         }
 
-        .settings-container { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
-        .switch-group { display: flex; align-items: center; gap: 6px; }
-        .switch-label { font-size: 9px; font-weight: 800; color: #5F6368; text-transform: uppercase; width: 45px; text-align: right; }
-        .switch { position: relative; display: inline-block; width: 34px; height: 18px; }
+        .settings-container { display: flex; flex-direction: column; gap: 2px; align-items: flex-end; }
+        .switch-group { display: flex; align-items: center; gap: 5px; }
+        .switch-label { font-size: 8px; font-weight: 800; color: #5F6368; text-transform: uppercase; width: 40px; text-align: right; }
+        .switch { position: relative; display: inline-block; width: 30px; height: 16px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 18px; }
-        .slider:before { position: absolute; content: ""; height: 12px; width: 12px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 16px; }
+        .slider:before { position: absolute; content: ""; height: 12px; width: 12px; left: 2px; bottom: 2px; background-color: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background-color: #EA4335; }
-        input:checked + .slider:before { transform: translateX(16px); }
+        input:checked + .slider:before { transform: translateX(14px); }
 
-        .app-subtitle { font-size: 11px; color: #70757A; width: 100%; max-width: 400px; margin-bottom: 8px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; flex-shrink: 0; }
+        .app-subtitle { font-size: 9px; color: #70757A; width: 100%; max-width: 400px; margin-bottom: 6px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; flex-shrink: 0; }
 
-        /* Main Display Card */
+        /* Main Display Card - 크기 및 패딩 축소 */
         .card { 
             background: white; width: 100%; max-width: 400px; 
-            padding: 18px; border-radius: 25px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
-            margin-bottom: 12px; text-align: center; flex-shrink: 0; /* 카드 높이 유지 */
+            padding: 12px 18px; border-radius: 20px; 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05); 
+            margin-bottom: 8px; text-align: center; flex-shrink: 0;
         }
-        .clock { font-size: clamp(28px, 9vw, 42px); font-weight: 800; margin: 8px 0; font-variant-numeric: tabular-nums; }
-        .status { font-weight: bold; color: #1A73E8; margin-bottom: 12px; font-size: 15px; text-transform: uppercase; }
-        .timer-box { background: #F8F9FA; padding: 10px; border-radius: 18px; margin-top: 6px; border: 1px solid #eee; }
-        .timer-label { font-size: 9px; color: #999; font-weight: 800; margin-bottom: 3px; }
-        .timer-value { font-size: clamp(22px, 7vw, 30px); font-weight: bold; color: #4285F4; font-family: monospace; }
+        /* [Update] 상단 시간 표시창 사이즈 축소 */
+        .clock { font-size: clamp(24px, 7vw, 34px); font-weight: 800; margin: 4px 0; font-variant-numeric: tabular-nums; color: #202124; }
+        .status { font-weight: bold; color: #1A73E8; margin-bottom: 8px; font-size: 13px; text-transform: uppercase; }
+        
+        /* 타이머 박스 사이즈 축소 */
+        .timer-box { background: #F8F9FA; padding: 6px 10px; border-radius: 14px; margin-top: 4px; border: 1px solid #eee; }
+        .timer-label { font-size: 8px; color: #999; font-weight: 800; margin-bottom: 2px; }
+        .timer-value { font-size: clamp(18px, 6vw, 24px); font-weight: bold; color: #4285F4; font-family: monospace; }
 
-        /* Action Buttons - 겹침 방지를 위해 마진 확보 */
+        /* Action Buttons - 공간 확보를 위한 배치 조정 */
         #buttons { 
             width: 100%; max-width: 400px; 
-            display: flex; flex-direction: column; gap: 10px; 
-            margin-bottom: 15px; flex-grow: 1; justify-content: flex-start;
+            display: flex; flex-direction: column; gap: 8px; 
+            margin-bottom: 10px; flex-grow: 1; justify-content: center; /* 중앙 정렬로 변경 */
         }
         button { 
-            width: 100%; padding: 16px; border: none; border-radius: 18px; 
-            color: white; font-size: 17px; font-weight: 800; cursor: pointer; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1); flex-shrink: 0;
+            width: 100%; padding: 14px; border: none; border-radius: 15px; 
+            color: white; font-size: 16px; font-weight: 800; cursor: pointer; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); flex-shrink: 0;
         }
         .in { background: linear-gradient(135deg, #34A853, #2D8E47); }
         .meal { background: linear-gradient(135deg, #FBBC05, #F29900); }
         .out { background: linear-gradient(135deg, #EA4335, #C5392F); }
         .reset { background: #5F6368; }
 
-        /* History - 바닥에 붙도록 설정 */
+        /* History - 최하단 배치 및 높이 최적화 */
         .footer-container { 
             width: 100%; max-width: 400px; 
-            margin-top: auto; padding-bottom: 10px; flex-shrink: 0;
+            margin-top: auto; padding-bottom: calc(env(safe-area-inset-bottom) + 5px); flex-shrink: 0;
         }
         .history { 
-            background: white; width: 100%; padding: 15px 20px; 
-            border-radius: 25px; font-size: 14px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
+            background: white; width: 100%; padding: 12px 18px; 
+            border-radius: 20px; font-size: 13px; 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05); 
         }
-        .history-item { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid #F0F0F0; }
+        .history-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #F0F0F0; }
         .history-item:last-child { border-bottom: none; }
 
         /* Modals */
-        .modal-overlay { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0, 0, 0, 0.85); display: none; justify-content: center; 
-            align-items: center; z-index: 9999; 
-        }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); display: none; justify-content: center; align-items: center; z-index: 9999; }
         .modal-overlay.active { display: flex; }
         .modal-content { background: white; padding: 25px; border-radius: 30px; text-align: center; width: 88%; max-width: 360px; }
-        .help-title { font-size: 20px; font-weight: 800; color: #1A73E8; margin-bottom: 15px; border-bottom: 2px solid #F0F2F5; padding-bottom: 10px; }
-        .help-body { text-align: left; font-size: 13px; line-height: 1.5; color: #3C4043; max-height: 50vh; overflow-y: auto; }
-        .golden-rule-box { background: #FFF4F4; border: 1.5px solid #EA4335; padding: 12px; border-radius: 15px; margin-bottom: 18px; }
-        .help-section-title { font-weight: 800; color: #5F6368; font-size: 11px; text-transform: uppercase; display: block; margin-bottom: 4px; }
-        .close-btn { margin-top: 15px; background: #1A73E8; color: white; padding: 12px 0; width: 100%; border-radius: 15px; font-weight: 700; cursor: pointer; text-align: center; }
-
-        /* Warning */
-        #warning-overlay.active .modal-content { animation: shake 0.5s; }
-        .warning-text { color: #EA4335; font-size: 32px; font-weight: 950; display: block; margin-bottom: 10px; }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
-
-        /* Blink Animations */
-        @keyframes blink-red { 0%, 100% { color: #EA4335; opacity: 1; } 50% { opacity: 0.3; } }
-        @keyframes blink-green { 0%, 100% { color: #34A853; opacity: 1; } 50% { opacity: 0.3; } }
-        .blinking-red { animation: blink-red 0.8s infinite !important; }
-        .blinking-green { animation: blink-green 0.8s infinite !important; }
     </style>
 </head>
 <body>
 
     <div id="warning-overlay" class="modal-overlay">
         <div class="modal-content">
-            <span class="warning-text">⚠️ SCAN FIRST</span>
+            <span style="color:#EA4335; font-size:28px; font-weight:950; display:block; margin-bottom:10px;">⚠️ SCAN FIRST</span>
             <div style="font-weight:800; color:#EA4335; font-size: 16px; margin-bottom: 5px;">GOLDEN RULE:</div>
             <div style="font-weight:700; color:#3C4043;">Scan your physical badge<br><b>BEFORE</b> clicking this button!</div>
         </div>
@@ -127,33 +110,15 @@
 
     <div id="help-overlay" class="modal-overlay">
         <div class="modal-content">
-            <div class="help-title">User Manual</div>
-            <div class="help-body">
-                <div class="golden-rule-box">
-                    <span class="help-section-title" style="color: #EA4335;">🏆 The Golden Rule</span>
-                    <p style="margin: 5px 0 0 0; font-weight: 700; line-height: 1.4;">
-                        Always scan your <u>physical badge</u> at the company terminal <b>FIRST</b>. This app is only for your personal tracking.
-                    </p>
+            <div style="font-size:20px; font-weight:800; color:#1A73E8; margin-bottom:15px; border-bottom:2px solid #F0F2F5; padding-bottom:10px;">User Manual</div>
+            <div style="text-align:left; font-size:13px; line-height:1.5; color:#3C4043; max-height:50vh; overflow-y:auto;">
+                <div style="background:#FFF4F4; border:1.5px solid #EA4335; padding:12px; border-radius:15px; margin-bottom:18px;">
+                    <span style="font-weight:800; color:#EA4335; font-size:11px; text-transform:uppercase;">🏆 The Golden Rule</span>
+                    <p style="margin:5px 0 0 0; font-weight:700; line-height:1.4;">Always scan your <u>physical badge</u> first.</p>
                 </div>
-                <div class="help-section">
-                    <span class="help-section-title">Workflow</span>
-                    • <b>Clock-In:</b> Records start time.<br>
-                    • <b>Meal Start/End:</b> Tracks 30-min break.<br>
-                    • <b>Clock-Out:</b> Finalizes shift record.
-                </div>
-                <div class="help-section">
-                    <span class="help-section-title">Alerts</span>
-                    • <span style="color:#EA4335; font-weight:700;">Red Blink:</span> Meal due (4h 30m) or Finish due (7h 50m).<br>
-                    • <span style="color:#34A853; font-weight:700;">Green Blink:</span> 30-min break completed.
-                </div>
-                <div class="help-section">
-                    <span class="help-section-title">Settings</span>
-                    • <b>Popup:</b> Toggle warning screen.<br>
-                    • <b>Sound:</b> Toggle soft alert melodies.<br>
-                    • <b>New Log:</b> Resets all data for a new day.
-                </div>
+                <p>• <b>IN/OUT:</b> 기록 시작 및 종료<br>• <b>MEAL:</b> 30분 식사 시간 측정</p>
             </div>
-            <div class="close-btn" onclick="toggleHelp(false)">I Understand!</div>
+            <div style="margin-top:15px; background:#1A73E8; color:white; padding:12px 0; width:100%; border-radius:15px; font-weight:700; cursor:pointer;" onclick="toggleHelp(false)">I Understand!</div>
         </div>
     </div>
 
@@ -165,24 +130,18 @@
         <div class="settings-container">
             <div class="switch-group">
                 <span class="switch-label">POPUP</span>
-                <label class="switch">
-                    <input type="checkbox" id="popup-toggle" checked>
-                    <span class="slider"></span>
-                </label>
+                <label class="switch"><input type="checkbox" id="popup-toggle" checked><span class="slider"></span></label>
             </div>
             <div class="switch-group">
                 <span class="switch-label">SOUND</span>
-                <label class="switch">
-                    <input type="checkbox" id="sound-toggle" checked>
-                    <span class="slider"></span>
-                </label>
+                <label class="switch"><input type="checkbox" id="sound-toggle" checked><span class="slider"></span></label>
             </div>
         </div>
     </div>
     <div class="app-subtitle">Smart Time Tracker</div>
     
     <div class="card">
-        <div id="date" style="color: #999; font-weight: 600; font-size: 13px;"></div>
+        <div id="date" style="color: #999; font-weight: 600; font-size: 11px;"></div>
         <div id="clock" class="clock">00:00:00</div>
         <div id="status" class="status">IDLE</div>
         <div id="work-box" class="timer-box">
@@ -199,7 +158,7 @@
 
     <div class="footer-container">
         <div class="card history">
-            <strong style="display:block; margin-bottom:5px;">Today's Log</strong>
+            <strong style="display:block; margin-bottom:4px;">Today's Log</strong>
             <div class="history-item"><span>IN</span> <span id="log-in" style="font-weight:700;">--:--</span></div>
             <div class="history-item"><span>MEAL</span> <span id="log-meal" style="font-weight:700;">--:--</span></div>
             <div class="history-item"><span>OUT</span> <span id="log-out" style="font-weight:700;">--:--</span></div>
@@ -212,9 +171,7 @@
         let audioCtx = null;
         let warningTimeout = null;
 
-        function toggleHelp(show) {
-            document.getElementById('help-overlay').classList.toggle('active', show);
-        }
+        function toggleHelp(show) { document.getElementById('help-overlay').classList.toggle('active', show); }
 
         function triggerWarning() {
             const popupEnabled = document.getElementById('popup-toggle').checked;
@@ -239,7 +196,7 @@
                     osc.type = 'sine';
                     osc.frequency.setValueAtTime(f, now + (i * stepDelay));
                     gain.gain.setValueAtTime(0, now + (i * stepDelay));
-                    gain.gain.linearRampToValueAtTime(0.03, now + (i * stepDelay) + 0.05);
+                    gain.gain.linearRampToValueAtTime(0.02, now + (i * stepDelay) + 0.05);
                     gain.gain.exponentialRampToValueAtTime(0.001, now + (i * stepDelay) + 0.3);
                     osc.connect(gain);
                     gain.connect(audioCtx.destination);
