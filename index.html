@@ -28,23 +28,26 @@
         .title-wrapper { display: flex; align-items: center; gap: 8px; }
         .app-title { font-size: 24px; font-weight: 900; color: #3C4043; letter-spacing: -0.5px; }
         
-        /* Help Button next to Title */
         .help-btn {
             width: 20px; height: 20px; background: #5F6368;
             border-radius: 50%; display: flex; justify-content: center; align-items: center;
             font-weight: 900; color: white; cursor: pointer; font-size: 12px;
         }
 
-        .switch-container { display: flex; align-items: center; gap: 8px; }
-        .switch { position: relative; display: inline-block; width: 40px; height: 22px; }
+        /* Dual Switch Container */
+        .settings-container { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
+        .switch-group { display: flex; align-items: center; gap: 6px; }
+        .switch-label { font-size: 9px; font-weight: 800; color: #5F6368; text-transform: uppercase; width: 45px; text-align: right; }
+        .switch { position: relative; display: inline-block; width: 34px; height: 18px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 22px; }
-        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 18px; }
+        .slider:before { position: absolute; content: ""; height: 12px; width: 12px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background-color: #EA4335; }
-        input:checked + .slider:before { transform: translateX(18px); }
+        input:checked + .slider:before { transform: translateX(16px); }
+
         .app-subtitle { font-size: 11px; color: #70757A; width: 100%; max-width: 400px; margin-bottom: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* Main Display Card */
+        /* Main Card */
         .card { 
             background: white; width: 100%; max-width: 400px; 
             padding: 20px; border-radius: 25px; 
@@ -57,7 +60,7 @@
         .timer-label { font-size: 10px; color: #999; font-weight: 800; margin-bottom: 4px; }
         .timer-value { font-size: clamp(24px, 8vw, 32px); font-weight: bold; color: #4285F4; font-family: monospace; }
 
-        /* Action Buttons */
+        /* Buttons */
         #buttons { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; min-height: 60px; }
         button { width: 100%; padding: 18px; border: none; border-radius: 18px; color: white; font-size: 18px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .in { background: linear-gradient(135deg, #34A853, #2D8E47); }
@@ -78,19 +81,15 @@
             align-items: center; z-index: 9999; 
         }
         .modal-overlay.active { display: flex; }
-        .modal-content { 
-            background: white; padding: 25px; border-radius: 30px; 
-            text-align: center; width: 88%; max-width: 360px;
-        }
+        .modal-content { background: white; padding: 25px; border-radius: 30px; text-align: center; width: 88%; max-width: 360px; }
 
-        /* Help Details */
         .help-title { font-size: 20px; font-weight: 800; color: #1A73E8; margin-bottom: 15px; border-bottom: 2px solid #F0F2F5; padding-bottom: 10px; }
-        .help-body { text-align: left; font-size: 13px; line-height: 1.5; color: #3C4043; max-height: 50vh; overflow-y: auto; }
-        .help-section { margin-bottom: 12px; }
+        .help-body { text-align: left; font-size: 13px; line-height: 1.5; color: #3C4043; max-height: 55vh; overflow-y: auto; }
+        .golden-rule-box { background: #FFF4F4; border: 1.5px solid #EA4335; padding: 12px; border-radius: 15px; margin-bottom: 18px; }
         .help-section-title { font-weight: 800; color: #5F6368; font-size: 11px; text-transform: uppercase; display: block; margin-bottom: 4px; }
         .close-btn { margin-top: 15px; background: #1A73E8; color: white; padding: 12px 0; width: 100%; border-radius: 15px; font-weight: 700; cursor: pointer; text-align: center; }
 
-        /* Warning Overlay */
+        /* Warning */
         #warning-overlay.active .modal-content { animation: shake 0.5s; }
         .warning-text { color: #EA4335; font-size: 32px; font-weight: 950; display: block; margin-bottom: 10px; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
@@ -107,7 +106,8 @@
     <div id="warning-overlay" class="modal-overlay">
         <div class="modal-content">
             <span class="warning-text">⚠️ SCAN FIRST</span>
-            <div style="font-weight:700; color:#3C4043;">Scan your Badge at the terminal<br><b>BEFORE</b> clicking here.</div>
+            <div style="font-weight:800; color:#EA4335; font-size: 16px; margin-bottom: 5px;">GOLDEN RULE:</div>
+            <div style="font-weight:700; color:#3C4043;">Scan your physical badge<br><b>BEFORE</b> clicking this button!</div>
         </div>
     </div>
 
@@ -115,23 +115,31 @@
         <div class="modal-content">
             <div class="help-title">User Manual</div>
             <div class="help-body">
-                <div class="help-section">
-                    <span class="help-section-title">Workflow</span>
-                    • <b>Clock-In:</b> Start shift.<br>
-                    • <b>Meal Start/End:</b> 30-min break.<br>
-                    • <b>Clock-Out:</b> Finish shift.
+                <div class="golden-rule-box">
+                    <span class="help-section-title" style="color: #EA4335;">🏆 The Golden Rule</span>
+                    <p style="margin: 5px 0 0 0; font-weight: 700; line-height: 1.4;">
+                        Always scan your <u>physical badge</u> at the company terminal <b>FIRST</b>. This app is only for your personal tracking.
+                    </p>
                 </div>
                 <div class="help-section">
-                    <span class="help-section-title">The Golden Rule</span>
-                    • Always scan your <b>physical badge</b> first. This app is for your personal log.
+                    <span class="help-section-title">Workflow</span>
+                    • <b>Clock-In:</b> Records start time.<br>
+                    • <b>Meal Start/End:</b> Tracks 30-min break.<br>
+                    • <b>Clock-Out:</b> Finalizes shift record.
                 </div>
                 <div class="help-section">
                     <span class="help-section-title">Alerts</span>
                     • <span style="color:#EA4335; font-weight:700;">Red Blink:</span> Meal due (4h 30m) or Finish due (7h 50m).<br>
                     • <span style="color:#34A853; font-weight:700;">Green Blink:</span> 30-min break completed.
                 </div>
+                <div class="help-section">
+                    <span class="help-section-title">Settings</span>
+                    • <b>Popup:</b> Toggle warning screen.<br>
+                    • <b>Sound:</b> Toggle soft alert melodies.<br>
+                    • <b>New Log:</b> Resets all data for a new day.
+                </div>
             </div>
-            <div class="close-btn" onclick="toggleHelp(false)">Got it!</div>
+            <div class="close-btn" onclick="toggleHelp(false)">I Understand!</div>
         </div>
     </div>
 
@@ -140,12 +148,21 @@
             <div class="app-title">Scan & Click</div>
             <div class="help-btn" onclick="toggleHelp(true)">?</div>
         </div>
-        <div class="switch-container">
-            <span style="font-size:10px; font-weight:800; color:#5F6368;">ALARM</span>
-            <label class="switch">
-                <input type="checkbox" id="master-alarm-toggle" checked>
-                <span class="slider"></span>
-            </label>
+        <div class="settings-container">
+            <div class="switch-group">
+                <span class="switch-label">POPUP</span>
+                <label class="switch">
+                    <input type="checkbox" id="popup-toggle" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="switch-group">
+                <span class="switch-label">SOUND</span>
+                <label class="switch">
+                    <input type="checkbox" id="sound-toggle" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
         </div>
     </div>
     <div class="app-subtitle">Smart Time Tracker</div>
@@ -186,27 +203,40 @@
         }
 
         function triggerWarning() {
-            if (!document.getElementById('master-alarm-toggle').checked) return;
-            const overlay = document.getElementById('warning-overlay');
-            overlay.classList.add('active');
-            playAlertTone(100, 0.25); 
-            if (warningTimeout) clearTimeout(warningTimeout);
-            warningTimeout = setTimeout(() => overlay.classList.remove('active'), 1700);
+            const popupEnabled = document.getElementById('popup-toggle').checked;
+            const soundEnabled = document.getElementById('sound-toggle').checked;
+
+            if (soundEnabled) playMelody([523.25, 659.25, 783.99], 0.1); // C5, E5, G5 soft chord
+
+            if (popupEnabled) {
+                const overlay = document.getElementById('warning-overlay');
+                overlay.classList.add('active');
+                if (warningTimeout) clearTimeout(warningTimeout);
+                warningTimeout = setTimeout(() => overlay.classList.remove('active'), 1700);
+            }
         }
 
-        function playAlertTone(freq, dur) {
-            if (!document.getElementById('master-alarm-toggle').checked) return;
+        // Soft Melody Player
+        function playMelody(freqs, stepDelay) {
+            if (!document.getElementById('sound-toggle').checked) return;
             try {
                 if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + dur);
+                const now = audioCtx.currentTime;
+                freqs.forEach((f, i) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine'; // Softest wave type
+                    osc.frequency.setValueAtTime(f, now + (i * stepDelay));
+                    
+                    gain.gain.setValueAtTime(0, now + (i * stepDelay));
+                    gain.gain.linearRampToValueAtTime(0.03, now + (i * stepDelay) + 0.05);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + (i * stepDelay) + 0.3);
+                    
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now + (i * stepDelay));
+                    osc.stop(now + (i * stepDelay) + 0.4);
+                });
             } catch(e) {}
         }
 
@@ -219,11 +249,11 @@
                 const workMs = getWorkMs(now);
                 document.getElementById('work-timer').innerText = formatDiff(workMs);
                 const isWorkRange = (workMs/60000 >= 270 && workMs/60000 < 300) || (workMs/60000 >= 470 && workMs/60000 <= 480);
-                const alarmEnabled = document.getElementById('master-alarm-toggle').checked;
+                const soundEnabled = document.getElementById('sound-toggle').checked;
 
-                if (status === 'WORKING' && !logs.mealS && isWorkRange && alarmEnabled) {
+                if (status === 'WORKING' && !logs.mealS && isWorkRange) {
                     document.getElementById('work-timer').classList.add('blinking-red');
-                    if (now.getSeconds() % 2 === 0) playAlertTone(660, 0.2);
+                    if (soundEnabled && now.getSeconds() % 4 === 0) playMelody([659.25, 523.25], 0.15); // E5 -> C5 soft alert
                 } else {
                     document.getElementById('work-timer').classList.remove('blinking-red');
                 }
@@ -232,9 +262,9 @@
                     document.getElementById('meal-box').style.display = 'block';
                     const mealMs = getMealMs(now);
                     document.getElementById('meal-timer').innerText = formatDiff(mealMs);
-                    if (status === 'MEAL' && (mealMs/60000) >= 30 && alarmEnabled) {
+                    if (status === 'MEAL' && (mealMs/60000) >= 30) {
                         document.getElementById('meal-timer').classList.add('blinking-green');
-                        if (now.getSeconds() % 2 === 0) playAlertTone(880, 0.2);
+                        if (soundEnabled && now.getSeconds() % 4 === 0) playMelody([783.99, 1046.50], 0.15); // G5 -> C6 happy alert
                     } else {
                         document.getElementById('meal-timer').classList.remove('blinking-green');
                     }
@@ -277,7 +307,6 @@
             else if (status === 'WORKING') html = '<button class="meal" onclick="handleAction(\'MS\')">MEAL START</button><button class="out" onclick="handleAction(\'OUT\')">CLOCK-OUT</button>';
             else if (status === 'MEAL') html = '<button class="meal" onclick="handleAction(\'ME\')">MEAL END</button><button class="out" onclick="handleAction(\'OUT\')">CLOCK-OUT</button>';
             else if (status === 'DONE') html = '<button class="reset" onclick="handleAction(\'RESET\')">NEW LOG</button>';
-            
             if (container.innerHTML !== html) container.innerHTML = html;
         }
         setInterval(update, 1000);
