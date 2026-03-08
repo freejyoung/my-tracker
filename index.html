@@ -140,8 +140,11 @@
             const overlay = document.getElementById('scan-overlay');
             overlay.classList.add('show');
             playAlertTone(100, 0.25); 
+            
             if (overlayTimeout) clearTimeout(overlayTimeout);
-            overlayTimeout = setTimeout(() => overlay.classList.remove('show'), 2200);
+            
+            // [수정] 노출 시간을 2200ms에서 1700ms로 단축
+            overlayTimeout = setTimeout(() => overlay.classList.remove('show'), 1700);
         }
 
         function playAlertTone(freq, dur) {
@@ -212,21 +215,17 @@
         function formatTime(date) { return date.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', hour12:false}); }
 
         function handleAction(type) {
-            // [수정] RESET 클릭 시 경고 없이 바로 실행
             if (type !== 'RESET') {
                 triggerStrongWarning();
             }
-
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             const time = new Date();
             const timeStr = formatTime(time);
-            
             if (type === 'IN') { logs.in = time; status = 'WORKING'; document.getElementById('log-in').innerText = timeStr; }
             else if (type === 'MS') { logs.mealS = time; status = 'MEAL'; document.getElementById('log-meal').innerText = `${timeStr} - --:--`; }
             else if (type === 'ME') { logs.mealE = time; status = 'WORKING'; document.getElementById('log-meal').innerText = `${formatTime(new Date(logs.mealS))} - ${timeStr}`; }
             else if (type === 'OUT') { logs.out = time; status = 'DONE'; document.getElementById('log-out').innerText = timeStr; }
             else if (type === 'RESET') { location.reload(); }
-            
             document.getElementById('status').innerText = status;
         }
 
