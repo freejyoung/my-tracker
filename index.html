@@ -2,121 +2,113 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Scan & Click - Time Tracker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Scan & Click</title>
     
     <link rel="apple-touch-icon" href="https://img.icons8.com/fluency/180/clock.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Scan&Click">
 
     <style>
+        /* 한 화면 구성을 위한 레이아웃 설정 */
+        * { box-sizing: border-box; }
+        html, body { 
+            height: 100%; 
+            margin: 0; 
+            padding: 0; 
+            overflow: hidden; /* 스크롤 방지 */
+        }
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
             background-color: #F0F2F5; 
-            display: flex; flex-direction: column; align-items: center; 
-            padding: env(safe-area-inset-top) 20px 20px 20px; 
-            user-select: none; -webkit-tap-highlight-color: transparent;
-            transition: background-color 0.4s ease;
-            overflow-x: hidden;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: env(safe-area-inset-top) 15px env(safe-area-inset-bottom) 15px; 
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* [추가] 마스터 알람 스위치 스타일 */
+        /* 헤더 섹션 */
         .header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            max-width: 400px;
-            margin-top: 10px;
-            margin-bottom: 5px;
+            display: flex; justify-content: space-between; align-items: center;
+            width: 100%; max-width: 400px; padding-top: 10px;
         }
+        .app-title { font-size: 24px; font-weight: 900; color: #3C4043; letter-spacing: -0.5px; }
         .switch-container { display: flex; align-items: center; gap: 8px; }
-        .switch {
-            position: relative; display: inline-block; width: 44px; height: 24px;
-        }
+        .switch { position: relative; display: inline-block; width: 40px; height: 22px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider {
-            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #ccc; transition: .4s; border-radius: 24px;
-        }
-        .slider:before {
-            position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px;
-            background-color: white; transition: .4s; border-radius: 50%;
-        }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 22px; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background-color: #EA4335; }
-        input:checked + .slider:before { transform: translateX(20px); }
-        .switch-label { font-size: 11px; font-weight: 800; color: #5F6368; text-transform: uppercase; }
+        input:checked + .slider:before { transform: translateX(18px); }
+        .app-subtitle { font-size: 11px; color: #70757A; width: 100%; max-width: 400px; margin-bottom: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* 강력한 SCAN FIRST 오버레이 스타일 */
-        #scan-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            display: flex; justify-content: center; align-items: center;
-            z-index: 9999; opacity: 0; pointer-events: none;
-            transition: opacity 0.2s ease;
+        /* 메인 카드 (유동적 크기) */
+        .card { 
+            background: white; width: 100%; max-width: 400px; 
+            padding: 20px; border-radius: 25px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
+            margin-bottom: 10px; text-align: center;
+            flex-shrink: 1; /* 화면이 작으면 줄어듦 */
         }
-        #scan-overlay.show { opacity: 1; }
+        .clock { font-size: clamp(30px, 10vw, 45px); font-weight: 800; margin: 10px 0; font-variant-numeric: tabular-nums; }
+        .status { font-weight: bold; color: #1A73E8; margin-bottom: 15px; font-size: 16px; text-transform: uppercase; }
+        
+        .timer-box { background: #F8F9FA; padding: 12px; border-radius: 18px; margin-top: 8px; border: 1px solid #eee; transition: all 0.4s ease; }
+        .timer-label { font-size: 10px; color: #999; font-weight: 800; margin-bottom: 4px; }
+        .timer-value { font-size: clamp(24px, 8vw, 32px); font-weight: bold; color: #4285F4; font-family: monospace; }
 
-        @keyframes shake {
-            0%, 100% { transform: scale(1.1) translateX(0); }
-            20%, 60% { transform: scale(1.1) translateX(-10px); }
-            40%, 80% { transform: scale(1.1) translateX(10px); }
-        }
-
-        .warning-content {
-            background: white; padding: 50px 40px; border-radius: 40px; text-align: center;
-            width: 85%; max-width: 350px; transform: scale(0.3);
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.4);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
-        }
-        #scan-overlay.show .warning-content { animation: shake 0.5s ease-in-out; transform: scale(1.1); }
-
-        .warning-text { color: #EA4335; font-size: 44px; font-weight: 950; display: block; margin-bottom: 15px; }
-        .warning-subtext { color: #3C4043; font-size: 18px; line-height: 1.4; font-weight: 700; }
-
-        /* 기존 UI 스타일 */
-        .app-title { font-size: 28px; font-weight: 900; color: #3C4043; letter-spacing: -0.5px; }
-        .app-subtitle { font-size: 12px; color: #70757A; margin-bottom: 25px; align-self: flex-start; margin-left: calc(50% - 200px); font-weight: 500; text-transform: uppercase; letter-spacing: 2px; }
-        .card { background: white; width: 100%; max-width: 400px; padding: 25px; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 20px; text-align: center; }
-        .clock { font-size: 45px; font-weight: 800; margin: 15px 0; font-variant-numeric: tabular-nums; }
-        .status { font-weight: bold; color: #1A73E8; margin-bottom: 25px; font-size: 18px; text-transform: uppercase; }
-        .timer-box { background: #F8F9FA; padding: 15px; border-radius: 20px; margin-top: 12px; border: 1px solid #eee; transition: all 0.4s ease; }
-        .timer-value { font-size: 30px; font-weight: bold; color: #4285F4; font-family: monospace; }
-
-        body.is-working #work-box { background: #E8F0FE; padding: 30px 15px; transform: scale(1.02); }
-        body.is-working #work-timer { font-size: 52px; color: #1A73E8; }
-        body.is-meal #meal-box { background: #FFF4D1; padding: 30px 15px; transform: scale(1.02); }
-        body.is-meal #meal-timer { font-size: 52px; color: #F29900; }
-
-        @keyframes blink-red { 0%, 100% { color: #EA4335; opacity: 1; } 50% { opacity: 0.3; } }
-        @keyframes blink-green { 0%, 100% { color: #34A853; opacity: 1; } 50% { opacity: 0.3; } }
-        .blinking-red { animation: blink-red 0.8s infinite !important; }
-        .blinking-green { animation: blink-green 0.8s infinite !important; }
-
-        button { width: 100%; max-width: 400px; padding: 20px; margin: 8px 0; border: none; border-radius: 20px; color: white; font-size: 19px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        /* 버튼 섹션 */
+        #buttons { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+        button { width: 100%; padding: 18px; border: none; border-radius: 18px; color: white; font-size: 18px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .in { background: linear-gradient(135deg, #34A853, #2D8E47); }
         .meal { background: linear-gradient(135deg, #FBBC05, #F29900); }
         .out { background: linear-gradient(135deg, #EA4335, #C5392F); }
         .reset { background: #5F6368; }
-        
-        .history { text-align: left; font-size: 15px; }
-        .history-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #F0F0F0; }
+
+        /* 히스토리 섹션 (하단 고정 및 크기 조절) */
+        .history { 
+            background: white; width: 100%; max-width: 400px; 
+            padding: 15px 20px; border-radius: 25px; 
+            font-size: 14px; box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            margin-bottom: env(safe-area-inset-bottom);
+        }
+        .history-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #F0F0F0; }
+        .history-item:last-child { border-bottom: none; }
+
+        /* 경고 오버레이 */
+        #scan-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); display: flex; justify-content: center; align-items: center; z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+        #scan-overlay.show { opacity: 1; }
+        .warning-content { background: white; padding: 40px 30px; border-radius: 35px; text-align: center; width: 80%; transform: scale(0.5); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.4); }
+        #scan-overlay.show .warning-content { animation: shake 0.5s; transform: scale(1); }
+        .warning-text { color: #EA4335; font-size: clamp(24px, 8vw, 36px); font-weight: 950; display: block; margin-bottom: 10px; }
+        .warning-subtext { color: #3C4043; font-size: 14px; line-height: 1.4; font-weight: 700; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px); } 40%, 80% { transform: translateX(10px); } }
+
+        /* 애니메이션 */
+        body.is-working #work-box { background: #E8F0FE; padding: 20px 15px; }
+        body.is-working #work-timer { font-size: clamp(32px, 12vw, 48px); color: #1A73E8; }
+        body.is-meal #meal-box { background: #FFF4D1; padding: 20px 15px; }
+        body.is-meal #meal-timer { font-size: clamp(32px, 12vw, 48px); color: #F29900; }
+        @keyframes blink-red { 0%, 100% { color: #EA4335; opacity: 1; } 50% { opacity: 0.3; } }
+        @keyframes blink-green { 0%, 100% { color: #34A853; opacity: 1; } 50% { opacity: 0.3; } }
+        .blinking-red { animation: blink-red 0.8s infinite !important; }
+        .blinking-green { animation: blink-green 0.8s infinite !important; }
     </style>
 </head>
 <body>
     <div id="scan-overlay">
         <div class="warning-content">
             <span class="warning-text">⚠️ SCAN FIRST</span>
-            <div class="warning-subtext">Scan your Badge at the Time Clicking before Cliking</div>
+            <div class="warning-subtext">Scan your Badge at the Time Clicking before Clicking</div>
         </div>
     </div>
 
     <div class="header-container">
         <div class="app-title">Scan & Click</div>
         <div class="switch-container">
-            <span class="switch-label">Alarm</span>
+            <span style="font-size:10px; font-weight:800; color:#5F6368;">ALARM</span>
             <label class="switch">
                 <input type="checkbox" id="master-alarm-toggle" checked>
                 <span class="slider"></span>
@@ -126,7 +118,7 @@
     <div class="app-subtitle">Smart Time Tracker</div>
     
     <div class="card">
-        <div id="date" style="color: #999; font-weight: 600;"></div>
+        <div id="date" style="color: #999; font-weight: 600; font-size: 13px;"></div>
         <div id="clock" class="clock">00:00:00</div>
         <div id="status" class="status">IDLE</div>
         <div id="work-box" class="timer-box">
@@ -139,10 +131,10 @@
         </div>
     </div>
 
-    <div id="buttons" style="width: 100%; max-width: 400px;"></div>
+    <div id="buttons"></div>
 
-    <div class="card history">
-        <strong>Today's Log</strong>
+    <div class="card history" style="margin-top: auto;">
+        <strong style="display:block; margin-bottom:5px;">Today's Log</strong>
         <div class="history-item"><span>IN</span> <span id="log-in" style="font-weight:700;">--:--</span></div>
         <div class="history-item"><span>MEAL</span> <span id="log-meal" style="font-weight:700;">--:--</span></div>
         <div class="history-item"><span>OUT</span> <span id="log-out" style="font-weight:700;">--:--</span></div>
@@ -155,21 +147,15 @@
         let overlayTimeout = null;
 
         function triggerStrongWarning() {
-            // [체크] 마스터 스위치가 켜져 있을 때만 실행
             if (!document.getElementById('master-alarm-toggle').checked) return;
-
             const overlay = document.getElementById('scan-overlay');
             overlay.classList.add('show');
             playAlertTone(100, 0.25); 
-
             if (overlayTimeout) clearTimeout(overlayTimeout);
-            overlayTimeout = setTimeout(() => {
-                overlay.classList.remove('show');
-            }, 2200);
+            overlayTimeout = setTimeout(() => overlay.classList.remove('show'), 2200);
         }
 
         function playAlertTone(freq, dur) {
-            // [체크] 마스터 스위치가 켜져 있을 때만 소리 재생
             if (!document.getElementById('master-alarm-toggle').checked) return;
             try {
                 if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -177,7 +163,7 @@
                 const gain = audioCtx.createGain();
                 osc.type = 'sawtooth';
                 osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
                 osc.start();
@@ -188,7 +174,7 @@
         function update() {
             const now = new Date();
             document.getElementById('clock').innerText = now.toLocaleTimeString('en-GB');
-            document.getElementById('date').innerText = now.toLocaleDateString('en-US', {weekday:'long', month:'short', day:'numeric'});
+            document.getElementById('date').innerText = now.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'});
             
             if (status === 'WORKING') document.body.className = 'is-working';
             else if (status === 'MEAL') document.body.className = 'is-meal';
@@ -198,8 +184,6 @@
                 const workMs = getWorkMs(now);
                 document.getElementById('work-timer').innerText = formatDiff(workMs);
                 const isWorkRange = (workMs/60000 >= 270 && workMs/60000 < 300) || (workMs/60000 >= 470 && workMs/60000 <= 480);
-                
-                // [체크] 마스터 스위치가 켜져 있을 때만 블링크 및 경고음 작동
                 const alarmEnabled = document.getElementById('master-alarm-toggle').checked;
 
                 if (status === 'WORKING' && !logs.mealS && isWorkRange && alarmEnabled) {
@@ -224,7 +208,6 @@
             renderButtons();
         }
 
-        // 공통 로직 유지
         function getWorkMs(now) {
             let end = (status === 'DONE') ? new Date(logs.out) : (status === 'MEAL') ? new Date(logs.mealS) : now;
             let mealDiff = (logs.mealS && logs.mealE) ? (new Date(logs.mealE) - new Date(logs.mealS)) : 0;
@@ -232,7 +215,6 @@
         }
         function getMealMs(now) { let end = (logs.mealE) ? new Date(logs.mealE) : now; return new Date(end) - new Date(logs.mealS); }
         function formatDiff(ms) {
-            if (ms < 0) ms = 0;
             const h = Math.floor(ms / 3600000).toString().padStart(2, '0');
             const m = Math.floor((ms % 3600000) / 60000).toString().padStart(2, '0');
             const s = Math.floor((ms % 60000) / 1000).toString().padStart(2, '0');
