@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Time Tracker with Alarm</title>
+    <title>Scan & Click - Time Tracker</title>
     
     <link rel="apple-touch-icon" href="https://img.icons8.com/fluency/180/clock.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="TimeClock">
+    <meta name="apple-mobile-web-app-title" content="Scan&Click">
 
     <style>
         body { 
@@ -18,26 +18,80 @@
             padding: env(safe-area-inset-top) 20px 20px 20px; 
             user-select: none; -webkit-tap-highlight-color: transparent;
             transition: background-color 0.4s ease;
+            overflow-x: hidden;
         }
-        .card { background: white; width: 100%; max-width: 400px; padding: 25px; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 20px; text-align: center; overflow: hidden; }
-        .clock { font-size: 45px; font-weight: 800; margin: 15px 0; font-variant-numeric: tabular-nums; transition: all 0.4s ease; }
-        .status { font-weight: bold; color: #1A73E8; margin-bottom: 25px; font-size: 18px; text-transform: uppercase; letter-spacing: 1px; }
-        .timer-box { background: #F8F9FA; padding: 15px; border-radius: 20px; margin-top: 12px; border: 1px solid #eee; transition: all 0.4s ease; }
-        .timer-label { font-size: 11px; color: #999; font-weight: 800; letter-spacing: 1px; margin-bottom: 5px; }
-        .timer-value { font-size: 30px; font-weight: bold; color: #4285F4; font-family: 'Courier New', Courier, monospace; transition: all 0.4s ease; }
 
-        /* 상태별 스타일 */
-        body.is-working .clock { font-size: 24px; color: #BBB; }
+        /* [추가] 마스터 알람 스위치 스타일 */
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 400px;
+            margin-top: 10px;
+            margin-bottom: 5px;
+        }
+        .switch-container { display: flex; align-items: center; gap: 8px; }
+        .switch {
+            position: relative; display: inline-block; width: 44px; height: 24px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc; transition: .4s; border-radius: 24px;
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px;
+            background-color: white; transition: .4s; border-radius: 50%;
+        }
+        input:checked + .slider { background-color: #EA4335; }
+        input:checked + .slider:before { transform: translateX(20px); }
+        .switch-label { font-size: 11px; font-weight: 800; color: #5F6368; text-transform: uppercase; }
+
+        /* 강력한 SCAN FIRST 오버레이 스타일 */
+        #scan-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 9999; opacity: 0; pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+        #scan-overlay.show { opacity: 1; }
+
+        @keyframes shake {
+            0%, 100% { transform: scale(1.1) translateX(0); }
+            20%, 60% { transform: scale(1.1) translateX(-10px); }
+            40%, 80% { transform: scale(1.1) translateX(10px); }
+        }
+
+        .warning-content {
+            background: white; padding: 50px 40px; border-radius: 40px; text-align: center;
+            width: 85%; max-width: 350px; transform: scale(0.3);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.4);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        }
+        #scan-overlay.show .warning-content { animation: shake 0.5s ease-in-out; transform: scale(1.1); }
+
+        .warning-text { color: #EA4335; font-size: 44px; font-weight: 950; display: block; margin-bottom: 15px; }
+        .warning-subtext { color: #3C4043; font-size: 18px; line-height: 1.4; font-weight: 700; }
+
+        /* 기존 UI 스타일 */
+        .app-title { font-size: 28px; font-weight: 900; color: #3C4043; letter-spacing: -0.5px; }
+        .app-subtitle { font-size: 12px; color: #70757A; margin-bottom: 25px; align-self: flex-start; margin-left: calc(50% - 200px); font-weight: 500; text-transform: uppercase; letter-spacing: 2px; }
+        .card { background: white; width: 100%; max-width: 400px; padding: 25px; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 20px; text-align: center; }
+        .clock { font-size: 45px; font-weight: 800; margin: 15px 0; font-variant-numeric: tabular-nums; }
+        .status { font-weight: bold; color: #1A73E8; margin-bottom: 25px; font-size: 18px; text-transform: uppercase; }
+        .timer-box { background: #F8F9FA; padding: 15px; border-radius: 20px; margin-top: 12px; border: 1px solid #eee; transition: all 0.4s ease; }
+        .timer-value { font-size: 30px; font-weight: bold; color: #4285F4; font-family: monospace; }
+
         body.is-working #work-box { background: #E8F0FE; padding: 30px 15px; transform: scale(1.02); }
         body.is-working #work-timer { font-size: 52px; color: #1A73E8; }
-        body.is-meal .clock { font-size: 20px; color: #DDD; }
-        body.is-meal #work-box { opacity: 0.4; transform: scale(0.9); }
         body.is-meal #meal-box { background: #FFF4D1; padding: 30px 15px; transform: scale(1.02); }
         body.is-meal #meal-timer { font-size: 52px; color: #F29900; }
 
-        /* 깜빡임 애니메이션 */
-        @keyframes blink-red { 0% { color: #EA4335; opacity: 1; } 50% { color: #EA4335; opacity: 0.3; } 100% { color: #EA4335; opacity: 1; } }
-        @keyframes blink-green { 0% { color: #34A853; opacity: 1; } 50% { color: #34A853; opacity: 0.3; } 100% { color: #34A853; opacity: 1; } }
+        @keyframes blink-red { 0%, 100% { color: #EA4335; opacity: 1; } 50% { opacity: 0.3; } }
+        @keyframes blink-green { 0%, 100% { color: #34A853; opacity: 1; } 50% { opacity: 0.3; } }
         .blinking-red { animation: blink-red 0.8s infinite !important; }
         .blinking-green { animation: blink-green 0.8s infinite !important; }
 
@@ -52,6 +106,25 @@
     </style>
 </head>
 <body>
+    <div id="scan-overlay">
+        <div class="warning-content">
+            <span class="warning-text">⚠️ SCAN FIRST</span>
+            <div class="warning-subtext">Scan your Badge at the Time Clicking before Cliking</div>
+        </div>
+    </div>
+
+    <div class="header-container">
+        <div class="app-title">Scan & Click</div>
+        <div class="switch-container">
+            <span class="switch-label">Alarm</span>
+            <label class="switch">
+                <input type="checkbox" id="master-alarm-toggle" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+    <div class="app-subtitle">Smart Time Tracker</div>
+    
     <div class="card">
         <div id="date" style="color: #999; font-weight: 600;"></div>
         <div id="clock" class="clock">00:00:00</div>
@@ -65,7 +138,9 @@
             <div id="meal-timer" class="timer-value" style="color: #F29900;">00:00:00</div>
         </div>
     </div>
+
     <div id="buttons" style="width: 100%; max-width: 400px;"></div>
+
     <div class="card history">
         <strong>Today's Log</strong>
         <div class="history-item"><span>IN</span> <span id="log-in" style="font-weight:700;">--:--</span></div>
@@ -77,19 +152,37 @@
         let status = 'IDLE';
         let logs = { in: null, mealS: null, mealE: null, out: null };
         let audioCtx = null;
+        let overlayTimeout = null;
 
-        // 알람 소리 생성 함수 (Beep음)
-        function playAlarmSound(frequency = 440) {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-            oscillator.type = 'sine';
-            oscillator.frequency.setValueAtTime(frequency, audioCtx.currentTime);
-            gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime); // 볼륨 조절
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-            oscillator.start();
-            oscillator.stop(audioCtx.currentTime + 0.2); // 0.2초 동안 재생
+        function triggerStrongWarning() {
+            // [체크] 마스터 스위치가 켜져 있을 때만 실행
+            if (!document.getElementById('master-alarm-toggle').checked) return;
+
+            const overlay = document.getElementById('scan-overlay');
+            overlay.classList.add('show');
+            playAlertTone(100, 0.25); 
+
+            if (overlayTimeout) clearTimeout(overlayTimeout);
+            overlayTimeout = setTimeout(() => {
+                overlay.classList.remove('show');
+            }, 2200);
+        }
+
+        function playAlertTone(freq, dur) {
+            // [체크] 마스터 스위치가 켜져 있을 때만 소리 재생
+            if (!document.getElementById('master-alarm-toggle').checked) return;
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + dur);
+            } catch(e) {}
         }
 
         function update() {
@@ -103,36 +196,35 @@
 
             if (status !== 'IDLE') {
                 const workMs = getWorkMs(now);
-                const workTimerElem = document.getElementById('work-timer');
-                workTimerElem.innerText = formatDiff(workMs);
+                document.getElementById('work-timer').innerText = formatDiff(workMs);
+                const isWorkRange = (workMs/60000 >= 270 && workMs/60000 < 300) || (workMs/60000 >= 470 && workMs/60000 <= 480);
                 
-                const workMins = workMs / 60000;
-                const isWorkRange = (workMins >= 270 && workMins < 300) || (workMins >= 470 && workMins <= 480);
-                
-                if (status === 'WORKING' && !logs.mealS && isWorkRange) {
-                    workTimerElem.classList.add('blinking-red');
-                    if (now.getSeconds() % 2 === 0) playAlarmSound(660); // 2초마다 알람
+                // [체크] 마스터 스위치가 켜져 있을 때만 블링크 및 경고음 작동
+                const alarmEnabled = document.getElementById('master-alarm-toggle').checked;
+
+                if (status === 'WORKING' && !logs.mealS && isWorkRange && alarmEnabled) {
+                    document.getElementById('work-timer').classList.add('blinking-red');
+                    if (now.getSeconds() % 2 === 0) playAlertTone(660, 0.2);
                 } else {
-                    workTimerElem.classList.remove('blinking-red');
+                    document.getElementById('work-timer').classList.remove('blinking-red');
                 }
 
                 if (status === 'MEAL' || (logs.mealS && logs.mealE)) {
                     document.getElementById('meal-box').style.display = 'block';
                     const mealMs = getMealMs(now);
-                    const mealTimerElem = document.getElementById('meal-timer');
-                    mealTimerElem.innerText = formatDiff(mealMs);
-                    
-                    if (status === 'MEAL' && (mealMs/60000) >= 30) {
-                        mealTimerElem.classList.add('blinking-green');
-                        if (now.getSeconds() % 2 === 0) playAlarmSound(880); // 2초마다 알람 (식사는 좀 더 높은 음)
+                    document.getElementById('meal-timer').innerText = formatDiff(mealMs);
+                    if (status === 'MEAL' && (mealMs/60000) >= 30 && alarmEnabled) {
+                        document.getElementById('meal-timer').classList.add('blinking-green');
+                        if (now.getSeconds() % 2 === 0) playAlertTone(880, 0.2);
                     } else {
-                        mealTimerElem.classList.remove('blinking-green');
+                        document.getElementById('meal-timer').classList.remove('blinking-green');
                     }
                 }
             }
             renderButtons();
         }
 
+        // 공통 로직 유지
         function getWorkMs(now) {
             let end = (status === 'DONE') ? new Date(logs.out) : (status === 'MEAL') ? new Date(logs.mealS) : now;
             let mealDiff = (logs.mealS && logs.mealE) ? (new Date(logs.mealE) - new Date(logs.mealS)) : 0;
@@ -149,9 +241,8 @@
         function formatTime(date) { return date.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', hour12:false}); }
 
         function handleAction(type) {
-            // 사운드 재생 권한 활성화 (첫 클릭 시)
+            triggerStrongWarning();
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            
             const time = new Date();
             const timeStr = formatTime(time);
             if (type === 'IN') { logs.in = time; status = 'WORKING'; document.getElementById('log-in').innerText = timeStr; }
