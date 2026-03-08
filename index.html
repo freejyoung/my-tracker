@@ -16,25 +16,15 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
             background-color: #F0F2F5; 
             display: flex; flex-direction: column; align-items: center; 
-            /* 상단 여백 최소화 */
             padding: calc(env(safe-area-inset-top) + 5px) 15px env(safe-area-inset-bottom) 15px; 
             user-select: none; -webkit-tap-highlight-color: transparent;
         }
 
-        /* Header Section - 높이 축소 */
-        .header-container {
-            display: flex; justify-content: space-between; align-items: center;
-            width: 100%; max-width: 400px; flex-shrink: 0;
-        }
+        /* Header & Settings */
+        .header-container { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 400px; flex-shrink: 0; }
         .title-wrapper { display: flex; align-items: center; gap: 6px; }
         .app-title { font-size: 20px; font-weight: 900; color: #3C4043; letter-spacing: -0.5px; }
-        
-        .help-btn {
-            width: 18px; height: 18px; background: #5F6368;
-            border-radius: 50%; display: flex; justify-content: center; align-items: center;
-            font-weight: 900; color: white; cursor: pointer; font-size: 10px;
-        }
-
+        .help-btn { width: 18px; height: 18px; background: #5F6368; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: 900; color: white; cursor: pointer; font-size: 10px; }
         .settings-container { display: flex; flex-direction: column; gap: 2px; align-items: flex-end; }
         .switch-group { display: flex; align-items: center; gap: 5px; }
         .switch-label { font-size: 8px; font-weight: 800; color: #5F6368; text-transform: uppercase; width: 40px; text-align: right; }
@@ -44,53 +34,53 @@
         .slider:before { position: absolute; content: ""; height: 12px; width: 12px; left: 2px; bottom: 2px; background-color: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background-color: #EA4335; }
         input:checked + .slider:before { transform: translateX(14px); }
-
         .app-subtitle { font-size: 9px; color: #70757A; width: 100%; max-width: 400px; margin-bottom: 6px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; flex-shrink: 0; }
 
-        /* Main Display Card - 크기 및 패딩 축소 */
-        .card { 
-            background: white; width: 100%; max-width: 400px; 
-            padding: 12px 18px; border-radius: 20px; 
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05); 
-            margin-bottom: 8px; text-align: center; flex-shrink: 0;
-        }
-        /* [Update] 상단 시간 표시창 사이즈 축소 */
-        .clock { font-size: clamp(24px, 7vw, 34px); font-weight: 800; margin: 4px 0; font-variant-numeric: tabular-nums; color: #202124; }
+        /* Card & Timers */
+        .card { background: white; width: 100%; max-width: 400px; padding: 12px 18px; border-radius: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.05); margin-bottom: 8px; text-align: center; flex-shrink: 0; }
+        .clock { font-size: 24px; font-weight: 800; margin: 4px 0; font-variant-numeric: tabular-nums; color: #202124; }
         .status { font-weight: bold; color: #1A73E8; margin-bottom: 8px; font-size: 13px; text-transform: uppercase; }
         
-        /* 타이머 박스 사이즈 축소 */
-        .timer-box { background: #F8F9FA; padding: 6px 10px; border-radius: 14px; margin-top: 4px; border: 1px solid #eee; }
-        .timer-label { font-size: 8px; color: #999; font-weight: 800; margin-bottom: 2px; }
-        .timer-value { font-size: clamp(18px, 6vw, 24px); font-weight: bold; color: #4285F4; font-family: monospace; }
+        /* Timer Base Style */
+        .timer-box { padding: 6px 10px; border-radius: 14px; margin-top: 4px; border: 1px solid #eee; transition: all 0.3s ease; overflow: hidden; }
+        .timer-label { font-size: 8px; font-weight: 800; margin-bottom: 2px; transition: 0.3s; }
+        .timer-value { font-size: 18px; font-weight: bold; font-family: monospace; transition: 0.3s; }
 
-        /* Action Buttons - 공간 확보를 위한 배치 조정 */
-        #buttons { 
-            width: 100%; max-width: 400px; 
-            display: flex; flex-direction: column; gap: 8px; 
-            margin-bottom: 10px; flex-grow: 1; justify-content: center; /* 중앙 정렬로 변경 */
-        }
-        button { 
-            width: 100%; padding: 14px; border: none; border-radius: 15px; 
-            color: white; font-size: 16px; font-weight: 800; cursor: pointer; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1); flex-shrink: 0;
-        }
+        /* [Work Timer Style] */
+        #work-box { background: #F8F9FA; }
+        #work-box .timer-label { color: #999; }
+        #work-box .timer-value { color: #4285F4; }
+        #work-box.highlight { background: #EEF4FF; border-color: #D2E3FC; padding: 10px 14px; }
+        #work-box.highlight .timer-label { font-size: 10px; color: #1A73E8; }
+        #work-box.highlight .timer-value { font-size: 32px; }
+
+        /* [Meal Timer Style] - Always Yellow Base */
+        #meal-box { background: #FFFDF0; border-color: #FFF59D; }
+        #meal-box .timer-label { color: #D4A017; }
+        #meal-box .timer-value { color: #F29900; }
+        #meal-box.highlight { background: #FFF8E1; border-color: #FFE082; padding: 10px 14px; }
+        #meal-box.highlight .timer-label { font-size: 10px; color: #E68A00; }
+        #meal-box.highlight .timer-value { font-size: 32px; }
+
+        /* Buttons */
+        #buttons { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; flex-grow: 1; justify-content: center; }
+        button { width: 100%; padding: 14px; border: none; border-radius: 15px; color: white; font-size: 16px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); flex-shrink: 0; }
         .in { background: linear-gradient(135deg, #34A853, #2D8E47); }
         .meal { background: linear-gradient(135deg, #FBBC05, #F29900); }
         .out { background: linear-gradient(135deg, #EA4335, #C5392F); }
         .reset { background: #5F6368; }
 
-        /* History - 최하단 배치 및 높이 최적화 */
-        .footer-container { 
-            width: 100%; max-width: 400px; 
-            margin-top: auto; padding-bottom: calc(env(safe-area-inset-bottom) + 5px); flex-shrink: 0;
-        }
-        .history { 
-            background: white; width: 100%; padding: 12px 18px; 
-            border-radius: 20px; font-size: 13px; 
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05); 
-        }
+        /* History */
+        .footer-container { width: 100%; max-width: 400px; margin-top: auto; padding-bottom: calc(env(safe-area-inset-bottom) + 5px); flex-shrink: 0; }
+        .history { background: white; width: 100%; padding: 12px 18px; border-radius: 20px; font-size: 13px; box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
         .history-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #F0F0F0; }
         .history-item:last-child { border-bottom: none; }
+
+        /* Blinking */
+        @keyframes blink-red { 0%, 100% { color: #EA4335; opacity: 1; } 50% { opacity: 0.3; } }
+        @keyframes blink-green { 0%, 100% { color: #34A853; opacity: 1; } 50% { opacity: 0.3; } }
+        .blinking-red { animation: blink-red 0.8s infinite !important; }
+        .blinking-green { animation: blink-green 0.8s infinite !important; }
 
         /* Modals */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); display: none; justify-content: center; align-items: center; z-index: 9999; }
@@ -110,15 +100,15 @@
 
     <div id="help-overlay" class="modal-overlay">
         <div class="modal-content">
-            <div style="font-size:20px; font-weight:800; color:#1A73E8; margin-bottom:15px; border-bottom:2px solid #F0F2F5; padding-bottom:10px;">User Manual</div>
-            <div style="text-align:left; font-size:13px; line-height:1.5; color:#3C4043; max-height:50vh; overflow-y:auto;">
-                <div style="background:#FFF4F4; border:1.5px solid #EA4335; padding:12px; border-radius:15px; margin-bottom:18px;">
-                    <span style="font-weight:800; color:#EA4335; font-size:11px; text-transform:uppercase;">🏆 The Golden Rule</span>
-                    <p style="margin:5px 0 0 0; font-weight:700; line-height:1.4;">Always scan your <u>physical badge</u> first.</p>
+            <div style="font-size:18px; font-weight:800; color:#1A73E8; margin-bottom:10px;">User Manual</div>
+            <div style="text-align:left; font-size:12px; line-height:1.4;">
+                <div style="background:#FFF4F4; border:1px solid #EA4335; padding:10px; border-radius:12px; margin-bottom:10px;">
+                    <span style="font-weight:800; color:#EA4335; font-size:10px;">🏆 Golden Rule</span>
+                    <p style="margin:4px 0 0 0;">Always scan your badge at the terminal first.</p>
                 </div>
-                <p>• <b>IN/OUT:</b> 기록 시작 및 종료<br>• <b>MEAL:</b> 30분 식사 시간 측정</p>
+                • 타이머는 현재 상태에 따라 자동 강조됩니다.<br>• Meal 타이머는 언제나 노란색으로 구분됩니다.
             </div>
-            <div style="margin-top:15px; background:#1A73E8; color:white; padding:12px 0; width:100%; border-radius:15px; font-weight:700; cursor:pointer;" onclick="toggleHelp(false)">I Understand!</div>
+            <div style="margin-top:15px; background:#1A73E8; color:white; padding:10px; border-radius:12px; font-weight:700; cursor:pointer;" onclick="toggleHelp(false)">OK</div>
         </div>
     </div>
 
@@ -128,14 +118,8 @@
             <div class="help-btn" onclick="toggleHelp(true)">?</div>
         </div>
         <div class="settings-container">
-            <div class="switch-group">
-                <span class="switch-label">POPUP</span>
-                <label class="switch"><input type="checkbox" id="popup-toggle" checked><span class="slider"></span></label>
-            </div>
-            <div class="switch-group">
-                <span class="switch-label">SOUND</span>
-                <label class="switch"><input type="checkbox" id="sound-toggle" checked><span class="slider"></span></label>
-            </div>
+            <div class="switch-group"><span class="switch-label">POPUP</span><label class="switch"><input type="checkbox" id="popup-toggle" checked><span class="slider"></span></label></div>
+            <div class="switch-group"><span class="switch-label">SOUND</span><label class="switch"><input type="checkbox" id="sound-toggle" checked><span class="slider"></span></label></div>
         </div>
     </div>
     <div class="app-subtitle">Smart Time Tracker</div>
@@ -144,14 +128,8 @@
         <div id="date" style="color: #999; font-weight: 600; font-size: 11px;"></div>
         <div id="clock" class="clock">00:00:00</div>
         <div id="status" class="status">IDLE</div>
-        <div id="work-box" class="timer-box">
-            <div class="timer-label">WORK DURATION</div>
-            <div id="work-timer" class="timer-value">00:00:00</div>
-        </div>
-        <div id="meal-box" class="timer-box" style="display:none;">
-            <div class="timer-label" style="color: #F29900;">MEAL DURATION</div>
-            <div id="meal-timer" class="timer-value" style="color: #F29900;">00:00:00</div>
-        </div>
+        <div id="work-box" class="timer-box"><div class="timer-label">WORK DURATION</div><div id="work-timer" class="timer-value">00:00:00</div></div>
+        <div id="meal-box" class="timer-box" style="display:none;"><div class="timer-label">MEAL DURATION</div><div id="meal-timer" class="timer-value">00:00:00</div></div>
     </div>
 
     <div id="buttons"></div>
@@ -174,34 +152,32 @@
         function toggleHelp(show) { document.getElementById('help-overlay').classList.toggle('active', show); }
 
         function triggerWarning() {
-            const popupEnabled = document.getElementById('popup-toggle').checked;
-            const soundEnabled = document.getElementById('sound-toggle').checked;
-            if (soundEnabled) playMelody([523.25, 659.25, 783.99], 0.1); 
-            if (popupEnabled) {
-                const overlay = document.getElementById('warning-overlay');
-                overlay.classList.add('active');
+            const p = document.getElementById('popup-toggle').checked;
+            const s = document.getElementById('sound-toggle').checked;
+            if (s) playMelody([523.25, 659.25, 783.99], 0.1); 
+            if (p) {
+                const o = document.getElementById('warning-overlay');
+                o.classList.add('active');
                 if (warningTimeout) clearTimeout(warningTimeout);
-                warningTimeout = setTimeout(() => overlay.classList.remove('active'), 1700);
+                warningTimeout = setTimeout(() => o.classList.remove('active'), 1700);
             }
         }
 
-        function playMelody(freqs, stepDelay) {
+        function playMelody(freqs, step) {
             if (!document.getElementById('sound-toggle').checked) return;
             try {
                 if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const now = audioCtx.currentTime;
+                const n = audioCtx.currentTime;
                 freqs.forEach((f, i) => {
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(f, now + (i * stepDelay));
-                    gain.gain.setValueAtTime(0, now + (i * stepDelay));
-                    gain.gain.linearRampToValueAtTime(0.02, now + (i * stepDelay) + 0.05);
-                    gain.gain.exponentialRampToValueAtTime(0.001, now + (i * stepDelay) + 0.3);
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-                    osc.start(now + (i * stepDelay));
-                    osc.stop(now + (i * stepDelay) + 0.4);
+                    const o = audioCtx.createOscillator();
+                    const g = audioCtx.createGain();
+                    o.type = 'sine';
+                    o.frequency.setValueAtTime(f, n + (i * step));
+                    g.gain.setValueAtTime(0, n + (i * step));
+                    g.gain.linearRampToValueAtTime(0.02, n + (i * step) + 0.05);
+                    g.gain.exponentialRampToValueAtTime(0.001, n + (i * step) + 0.3);
+                    o.connect(g); g.connect(audioCtx.destination);
+                    o.start(n + (i * step)); o.stop(n + (i * step) + 0.4);
                 });
             } catch(e) {}
         }
@@ -211,10 +187,27 @@
             document.getElementById('clock').innerText = now.toLocaleTimeString('en-GB');
             document.getElementById('date').innerText = now.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'});
             
+            const workBox = document.getElementById('work-box');
+            const mealBox = document.getElementById('meal-box');
+
             if (status !== 'IDLE') {
                 const workMs = getWorkMs(now);
                 document.getElementById('work-timer').innerText = formatDiff(workMs);
-                const isWorkRange = (workMs/60000 >= 270 && workMs/60000 < 300) || (workMs/60000 >= 470 && workMs/60000 <= 480);
+                
+                // 강조 및 스타일 로직
+                if (status === 'WORKING') {
+                    workBox.classList.add('highlight');
+                    mealBox.classList.remove('highlight');
+                    if (logs.mealE) mealBox.style.display = 'block'; 
+                } else if (status === 'MEAL') {
+                    mealBox.style.display = 'block';
+                    mealBox.classList.add('highlight');
+                    workBox.classList.remove('highlight');
+                }
+
+                // 알림 로직
+                const workMin = workMs/60000;
+                const isWorkRange = (workMin >= 270 && workMin < 300) || (workMin >= 470 && workMin <= 480);
                 const soundEnabled = document.getElementById('sound-toggle').checked;
 
                 if (status === 'WORKING' && !logs.mealS && isWorkRange) {
@@ -225,7 +218,6 @@
                 }
 
                 if (status === 'MEAL' || (logs.mealS && logs.mealE)) {
-                    document.getElementById('meal-box').style.display = 'block';
                     const mealMs = getMealMs(now);
                     document.getElementById('meal-timer').innerText = formatDiff(mealMs);
                     if (status === 'MEAL' && (mealMs/60000) >= 30) {
