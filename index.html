@@ -16,14 +16,15 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
             background-color: #F0F2F5; 
             display: flex; flex-direction: column; align-items: center; 
+            /* 여백 최적화: 상단은 기기 세이프 영역, 좌우는 최소 15px */
             padding: env(safe-area-inset-top) 15px env(safe-area-inset-bottom) 15px; 
             user-select: none; -webkit-tap-highlight-color: transparent;
         }
 
-        /* Header & Title Section */
+        /* Header Section */
         .header-container {
             display: flex; justify-content: space-between; align-items: center;
-            width: 100%; max-width: 400px; padding-top: 10px;
+            width: 100%; max-width: 400px; padding-top: 10px; flex-shrink: 0;
         }
         .title-wrapper { display: flex; align-items: center; gap: 8px; }
         .app-title { font-size: 24px; font-weight: 900; color: #3C4043; letter-spacing: -0.5px; }
@@ -34,7 +35,6 @@
             font-weight: 900; color: white; cursor: pointer; font-size: 12px;
         }
 
-        /* Dual Switch Container */
         .settings-container { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
         .switch-group { display: flex; align-items: center; gap: 6px; }
         .switch-label { font-size: 9px; font-weight: 800; color: #5F6368; text-transform: uppercase; width: 45px; text-align: right; }
@@ -45,33 +45,48 @@
         input:checked + .slider { background-color: #EA4335; }
         input:checked + .slider:before { transform: translateX(16px); }
 
-        .app-subtitle { font-size: 11px; color: #70757A; width: 100%; max-width: 400px; margin-bottom: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
+        .app-subtitle { font-size: 11px; color: #70757A; width: 100%; max-width: 400px; margin-bottom: 8px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; flex-shrink: 0; }
 
-        /* Main Card */
+        /* Main Display Card */
         .card { 
             background: white; width: 100%; max-width: 400px; 
-            padding: 20px; border-radius: 25px; 
+            padding: 18px; border-radius: 25px; 
             box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
-            margin-bottom: 10px; text-align: center; flex-shrink: 1;
+            margin-bottom: 12px; text-align: center; flex-shrink: 0; /* 카드 높이 유지 */
         }
-        .clock { font-size: clamp(30px, 10vw, 45px); font-weight: 800; margin: 10px 0; font-variant-numeric: tabular-nums; }
-        .status { font-weight: bold; color: #1A73E8; margin-bottom: 15px; font-size: 16px; text-transform: uppercase; }
-        .timer-box { background: #F8F9FA; padding: 12px; border-radius: 18px; margin-top: 8px; border: 1px solid #eee; transition: all 0.4s ease; }
-        .timer-label { font-size: 10px; color: #999; font-weight: 800; margin-bottom: 4px; }
-        .timer-value { font-size: clamp(24px, 8vw, 32px); font-weight: bold; color: #4285F4; font-family: monospace; }
+        .clock { font-size: clamp(28px, 9vw, 42px); font-weight: 800; margin: 8px 0; font-variant-numeric: tabular-nums; }
+        .status { font-weight: bold; color: #1A73E8; margin-bottom: 12px; font-size: 15px; text-transform: uppercase; }
+        .timer-box { background: #F8F9FA; padding: 10px; border-radius: 18px; margin-top: 6px; border: 1px solid #eee; }
+        .timer-label { font-size: 9px; color: #999; font-weight: 800; margin-bottom: 3px; }
+        .timer-value { font-size: clamp(22px, 7vw, 30px); font-weight: bold; color: #4285F4; font-family: monospace; }
 
-        /* Buttons */
-        #buttons { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; min-height: 60px; }
-        button { width: 100%; padding: 18px; border: none; border-radius: 18px; color: white; font-size: 18px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        /* Action Buttons - 겹침 방지를 위해 마진 확보 */
+        #buttons { 
+            width: 100%; max-width: 400px; 
+            display: flex; flex-direction: column; gap: 10px; 
+            margin-bottom: 15px; flex-grow: 1; justify-content: flex-start;
+        }
+        button { 
+            width: 100%; padding: 16px; border: none; border-radius: 18px; 
+            color: white; font-size: 17px; font-weight: 800; cursor: pointer; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); flex-shrink: 0;
+        }
         .in { background: linear-gradient(135deg, #34A853, #2D8E47); }
         .meal { background: linear-gradient(135deg, #FBBC05, #F29900); }
         .out { background: linear-gradient(135deg, #EA4335, #C5392F); }
         .reset { background: #5F6368; }
 
-        /* History */
-        .footer-container { width: 100%; max-width: 400px; margin-top: auto; margin-bottom: env(safe-area-inset-bottom); }
-        .history { background: white; width: 100%; padding: 15px 20px; border-radius: 25px; font-size: 14px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-        .history-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #F0F0F0; }
+        /* History - 바닥에 붙도록 설정 */
+        .footer-container { 
+            width: 100%; max-width: 400px; 
+            margin-top: auto; padding-bottom: 10px; flex-shrink: 0;
+        }
+        .history { 
+            background: white; width: 100%; padding: 15px 20px; 
+            border-radius: 25px; font-size: 14px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
+        }
+        .history-item { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid #F0F0F0; }
         .history-item:last-child { border-bottom: none; }
 
         /* Modals */
@@ -82,9 +97,8 @@
         }
         .modal-overlay.active { display: flex; }
         .modal-content { background: white; padding: 25px; border-radius: 30px; text-align: center; width: 88%; max-width: 360px; }
-
         .help-title { font-size: 20px; font-weight: 800; color: #1A73E8; margin-bottom: 15px; border-bottom: 2px solid #F0F2F5; padding-bottom: 10px; }
-        .help-body { text-align: left; font-size: 13px; line-height: 1.5; color: #3C4043; max-height: 55vh; overflow-y: auto; }
+        .help-body { text-align: left; font-size: 13px; line-height: 1.5; color: #3C4043; max-height: 50vh; overflow-y: auto; }
         .golden-rule-box { background: #FFF4F4; border: 1.5px solid #EA4335; padding: 12px; border-radius: 15px; margin-bottom: 18px; }
         .help-section-title { font-weight: 800; color: #5F6368; font-size: 11px; text-transform: uppercase; display: block; margin-bottom: 4px; }
         .close-btn { margin-top: 15px; background: #1A73E8; color: white; padding: 12px 0; width: 100%; border-radius: 15px; font-weight: 700; cursor: pointer; text-align: center; }
@@ -205,9 +219,7 @@
         function triggerWarning() {
             const popupEnabled = document.getElementById('popup-toggle').checked;
             const soundEnabled = document.getElementById('sound-toggle').checked;
-
-            if (soundEnabled) playMelody([523.25, 659.25, 783.99], 0.1); // C5, E5, G5 soft chord
-
+            if (soundEnabled) playMelody([523.25, 659.25, 783.99], 0.1); 
             if (popupEnabled) {
                 const overlay = document.getElementById('warning-overlay');
                 overlay.classList.add('active');
@@ -216,7 +228,6 @@
             }
         }
 
-        // Soft Melody Player
         function playMelody(freqs, stepDelay) {
             if (!document.getElementById('sound-toggle').checked) return;
             try {
@@ -225,13 +236,11 @@
                 freqs.forEach((f, i) => {
                     const osc = audioCtx.createOscillator();
                     const gain = audioCtx.createGain();
-                    osc.type = 'sine'; // Softest wave type
+                    osc.type = 'sine';
                     osc.frequency.setValueAtTime(f, now + (i * stepDelay));
-                    
                     gain.gain.setValueAtTime(0, now + (i * stepDelay));
                     gain.gain.linearRampToValueAtTime(0.03, now + (i * stepDelay) + 0.05);
                     gain.gain.exponentialRampToValueAtTime(0.001, now + (i * stepDelay) + 0.3);
-                    
                     osc.connect(gain);
                     gain.connect(audioCtx.destination);
                     osc.start(now + (i * stepDelay));
@@ -253,7 +262,7 @@
 
                 if (status === 'WORKING' && !logs.mealS && isWorkRange) {
                     document.getElementById('work-timer').classList.add('blinking-red');
-                    if (soundEnabled && now.getSeconds() % 4 === 0) playMelody([659.25, 523.25], 0.15); // E5 -> C5 soft alert
+                    if (soundEnabled && now.getSeconds() % 4 === 0) playMelody([659.25, 523.25], 0.15);
                 } else {
                     document.getElementById('work-timer').classList.remove('blinking-red');
                 }
@@ -264,7 +273,7 @@
                     document.getElementById('meal-timer').innerText = formatDiff(mealMs);
                     if (status === 'MEAL' && (mealMs/60000) >= 30) {
                         document.getElementById('meal-timer').classList.add('blinking-green');
-                        if (soundEnabled && now.getSeconds() % 4 === 0) playMelody([783.99, 1046.50], 0.15); // G5 -> C6 happy alert
+                        if (soundEnabled && now.getSeconds() % 4 === 0) playMelody([783.99, 1046.50], 0.15);
                     } else {
                         document.getElementById('meal-timer').classList.remove('blinking-green');
                     }
