@@ -21,10 +21,11 @@
         }
 
         /* Header & Settings */
-        .header-container { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 400px; flex-shrink: 0; }
+        .header-container { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 400px; flex-shrink: 0; z-index: 10; }
         .title-wrapper { display: flex; align-items: center; gap: 6px; }
         .app-title { font-size: 20px; font-weight: 900; color: #3C4043; letter-spacing: -0.5px; }
-        .help-btn { width: 18px; height: 18px; background: #5F6368; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: 900; color: white; cursor: pointer; font-size: 10px; }
+        .help-btn { width: 22px; height: 22px; background: #5F6368; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: 900; color: white; cursor: pointer; font-size: 12px; border: none; }
+        
         .settings-container { display: flex; flex-direction: column; gap: 2px; align-items: flex-end; }
         .switch-group { display: flex; align-items: center; gap: 5px; }
         .switch-label { font-size: 8px; font-weight: 800; color: #5F6368; text-transform: uppercase; width: 40px; text-align: right; }
@@ -39,14 +40,13 @@
         /* Card & Timers */
         .card { background: white; width: 100%; max-width: 400px; padding: 12px 18px; border-radius: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.05); margin-bottom: 8px; text-align: center; flex-shrink: 0; }
         .clock { font-size: 24px; font-weight: 800; margin: 4px 0; font-variant-numeric: tabular-nums; color: #202124; }
-        .status { font-weight: bold; color: #1A73E8; margin-bottom: 8px; font-size: 13px; text-transform: uppercase; }
+        .status-text { font-weight: bold; color: #1A73E8; margin-bottom: 8px; font-size: 13px; text-transform: uppercase; }
         
-        /* Timer Base Style */
+        /* Timer Styles */
         .timer-box { padding: 6px 10px; border-radius: 14px; margin-top: 4px; border: 1px solid #eee; transition: all 0.3s ease; overflow: hidden; }
         .timer-label { font-size: 8px; font-weight: 800; margin-bottom: 2px; transition: 0.3s; }
         .timer-value { font-size: 18px; font-weight: bold; font-family: monospace; transition: 0.3s; }
 
-        /* [Work Timer Style] */
         #work-box { background: #F8F9FA; }
         #work-box .timer-label { color: #999; }
         #work-box .timer-value { color: #4285F4; }
@@ -54,7 +54,6 @@
         #work-box.highlight .timer-label { font-size: 10px; color: #1A73E8; }
         #work-box.highlight .timer-value { font-size: 32px; }
 
-        /* [Meal Timer Style] - Always Yellow Base */
         #meal-box { background: #FFFDF0; border-color: #FFF59D; }
         #meal-box .timer-label { color: #D4A017; }
         #meal-box .timer-value { color: #F29900; }
@@ -65,10 +64,10 @@
         /* Buttons */
         #buttons { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; flex-grow: 1; justify-content: center; }
         button { width: 100%; padding: 14px; border: none; border-radius: 15px; color: white; font-size: 16px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); flex-shrink: 0; }
-        .in { background: linear-gradient(135deg, #34A853, #2D8E47); }
-        .meal { background: linear-gradient(135deg, #FBBC05, #F29900); }
-        .out { background: linear-gradient(135deg, #EA4335, #C5392F); }
-        .reset { background: #5F6368; }
+        .in-btn { background: linear-gradient(135deg, #34A853, #2D8E47); }
+        .meal-btn { background: linear-gradient(135deg, #FBBC05, #F29900); }
+        .out-btn { background: linear-gradient(135deg, #EA4335, #C5392F); }
+        .reset-btn { background: #5F6368; }
 
         /* History */
         .footer-container { width: 100%; max-width: 400px; margin-top: auto; padding-bottom: calc(env(safe-area-inset-bottom) + 5px); flex-shrink: 0; }
@@ -85,7 +84,18 @@
         /* Modals */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); display: none; justify-content: center; align-items: center; z-index: 9999; }
         .modal-overlay.active { display: flex; }
-        .modal-content { background: white; padding: 25px; border-radius: 30px; text-align: center; width: 88%; max-width: 360px; }
+        .modal-content { background: white; padding: 25px; border-radius: 30px; text-align: center; width: 88%; max-width: 360px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        
+        /* Help Content Styles */
+        .help-title { font-size: 20px; font-weight: 800; color: #1A73E8; margin-bottom: 15px; border-bottom: 2px solid #F0F2F5; padding-bottom: 10px; }
+        .help-body { text-align: left; font-size: 13px; line-height: 1.5; color: #3C4043; max-height: 55vh; overflow-y: auto; padding-right: 5px; }
+        .help-section { margin-bottom: 15px; }
+        .help-section-title { font-weight: 800; color: #5F6368; font-size: 11px; text-transform: uppercase; display: block; margin-bottom: 4px; }
+        .golden-rule-box { background: #FFF4F4; border: 1.5px solid #EA4335; padding: 12px; border-radius: 15px; margin-bottom: 15px; }
+        .close-btn { margin-top: 15px; background: #1A73E8; color: white; padding: 12px 0; width: 100%; border-radius: 15px; font-weight: 700; cursor: pointer; text-align: center; border: none; }
+
+        .help-body::-webkit-scrollbar { width: 4px; }
+        .help-body::-webkit-scrollbar-thumb { background: #dadce0; border-radius: 4px; }
     </style>
 </head>
 <body>
@@ -100,22 +110,40 @@
 
     <div id="help-overlay" class="modal-overlay">
         <div class="modal-content">
-            <div style="font-size:18px; font-weight:800; color:#1A73E8; margin-bottom:10px;">User Manual</div>
-            <div style="text-align:left; font-size:12px; line-height:1.4;">
-                <div style="background:#FFF4F4; border:1px solid #EA4335; padding:10px; border-radius:12px; margin-bottom:10px;">
-                    <span style="font-weight:800; color:#EA4335; font-size:10px;">🏆 Golden Rule</span>
-                    <p style="margin:4px 0 0 0;">Always scan your badge at the terminal first.</p>
+            <div class="help-title">User Manual</div>
+            <div class="help-body">
+                <div class="golden-rule-box">
+                    <span class="help-section-title" style="color: #EA4335;">🏆 The Golden Rule</span>
+                    <p style="margin: 5px 0 0 0; font-weight: 700; line-height: 1.4;">
+                        Always scan your <u>physical badge</u> at the terminal <b>FIRST</b>. This app is a personal time-tracking assistant.
+                    </p>
                 </div>
-                • 타이머는 현재 상태에 따라 자동 강조됩니다.<br>• Meal 타이머는 언제나 노란색으로 구분됩니다.
+                <div class="help-section">
+                    <span class="help-section-title">Workflow</span>
+                    • <b>Clock-In:</b> Records your work start time.<br>
+                    • <b>Meal Start/End:</b> Tracks your 30-min lunch break.<br>
+                    • <b>Clock-Out:</b> Finalizes your log for the day.
+                </div>
+                <div class="help-section">
+                    <span class="help-section-title">Smart Alerts</span>
+                    • <span style="color:#EA4335; font-weight:700;">Red Blink:</span> After 4h 30m before lunch or 7h 50m before clock-out.<br>
+                    • <span style="color:#34A853; font-weight:700;">Green Blink:</span> After 30 minutes of meal time to signal return.
+                </div>
+                <div class="help-section">
+                    <span class="help-section-title">Features</span>
+                    • <b>Highlight:</b> Active timer expands automatically.<br>
+                    • <b>Popup/Sound:</b> Toggle alerts in top settings.<br>
+                    • <b>New Log:</b> Resets all data after Clock-Out.
+                </div>
             </div>
-            <div style="margin-top:15px; background:#1A73E8; color:white; padding:10px; border-radius:12px; font-weight:700; cursor:pointer;" onclick="toggleHelp(false)">OK</div>
+            <button class="close-btn" onclick="toggleHelp(false)">I UNDERSTAND!</button>
         </div>
     </div>
 
     <div class="header-container">
         <div class="title-wrapper">
             <div class="app-title">Scan & Click</div>
-            <div class="help-btn" onclick="toggleHelp(true)">?</div>
+            <button class="help-btn" onclick="toggleHelp(true)">?</button>
         </div>
         <div class="settings-container">
             <div class="switch-group"><span class="switch-label">POPUP</span><label class="switch"><input type="checkbox" id="popup-toggle" checked><span class="slider"></span></label></div>
@@ -127,12 +155,13 @@
     <div class="card">
         <div id="date" style="color: #999; font-weight: 600; font-size: 11px;"></div>
         <div id="clock" class="clock">00:00:00</div>
-        <div id="status" class="status">IDLE</div>
+        <div id="status-label" class="status-text">IDLE</div>
         <div id="work-box" class="timer-box"><div class="timer-label">WORK DURATION</div><div id="work-timer" class="timer-value">00:00:00</div></div>
         <div id="meal-box" class="timer-box" style="display:none;"><div class="timer-label">MEAL DURATION</div><div id="meal-timer" class="timer-value">00:00:00</div></div>
     </div>
 
-    <div id="buttons"></div>
+    <div id="buttons">
+        </div>
 
     <div class="footer-container">
         <div class="card history">
@@ -144,12 +173,14 @@
     </div>
 
     <script>
-        let status = 'IDLE';
+        let currentStatus = 'IDLE';
         let logs = { in: null, mealS: null, mealE: null, out: null };
         let audioCtx = null;
         let warningTimeout = null;
 
-        function toggleHelp(show) { document.getElementById('help-overlay').classList.toggle('active', show); }
+        function toggleHelp(show) { 
+            document.getElementById('help-overlay').classList.toggle('active', show); 
+        }
 
         function triggerWarning() {
             const p = document.getElementById('popup-toggle').checked;
@@ -190,37 +221,35 @@
             const workBox = document.getElementById('work-box');
             const mealBox = document.getElementById('meal-box');
 
-            if (status !== 'IDLE') {
+            if (currentStatus !== 'IDLE') {
                 const workMs = getWorkMs(now);
                 document.getElementById('work-timer').innerText = formatDiff(workMs);
                 
-                // 강조 및 스타일 로직
-                if (status === 'WORKING') {
+                if (currentStatus === 'WORKING') {
                     workBox.classList.add('highlight');
                     mealBox.classList.remove('highlight');
                     if (logs.mealE) mealBox.style.display = 'block'; 
-                } else if (status === 'MEAL') {
+                } else if (currentStatus === 'MEAL') {
                     mealBox.style.display = 'block';
                     mealBox.classList.add('highlight');
                     workBox.classList.remove('highlight');
                 }
 
-                // 알림 로직
                 const workMin = workMs/60000;
                 const isWorkRange = (workMin >= 270 && workMin < 300) || (workMin >= 470 && workMin <= 480);
                 const soundEnabled = document.getElementById('sound-toggle').checked;
 
-                if (status === 'WORKING' && !logs.mealS && isWorkRange) {
+                if (currentStatus === 'WORKING' && !logs.mealS && isWorkRange) {
                     document.getElementById('work-timer').classList.add('blinking-red');
                     if (soundEnabled && now.getSeconds() % 4 === 0) playMelody([659.25, 523.25], 0.15);
                 } else {
                     document.getElementById('work-timer').classList.remove('blinking-red');
                 }
 
-                if (status === 'MEAL' || (logs.mealS && logs.mealE)) {
+                if (currentStatus === 'MEAL' || (logs.mealS && logs.mealE)) {
                     const mealMs = getMealMs(now);
                     document.getElementById('meal-timer').innerText = formatDiff(mealMs);
-                    if (status === 'MEAL' && (mealMs/60000) >= 30) {
+                    if (currentStatus === 'MEAL' && (mealMs/60000) >= 30) {
                         document.getElementById('meal-timer').classList.add('blinking-green');
                         if (soundEnabled && now.getSeconds() % 4 === 0) playMelody([783.99, 1046.50], 0.15);
                     } else {
@@ -232,7 +261,7 @@
         }
 
         function getWorkMs(now) {
-            let end = (status === 'DONE') ? new Date(logs.out) : (status === 'MEAL') ? new Date(logs.mealS) : now;
+            let end = (currentStatus === 'DONE') ? new Date(logs.out) : (currentStatus === 'MEAL') ? new Date(logs.mealS) : now;
             let mealDiff = (logs.mealS && logs.mealE) ? (new Date(logs.mealE) - new Date(logs.mealS)) : 0;
             return (new Date(end) - new Date(logs.in)) - mealDiff;
         }
@@ -250,23 +279,48 @@
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             const time = new Date();
             const timeStr = formatTime(time);
-            if (type === 'IN') { logs.in = time; status = 'WORKING'; document.getElementById('log-in').innerText = timeStr; }
-            else if (type === 'MS') { logs.mealS = time; status = 'MEAL'; document.getElementById('log-meal').innerText = `${timeStr} - --:--`; }
-            else if (type === 'ME') { logs.mealE = time; status = 'WORKING'; document.getElementById('log-meal').innerText = `${formatTime(new Date(logs.mealS))} - ${timeStr}`; }
-            else if (type === 'OUT') { logs.out = time; status = 'DONE'; document.getElementById('log-out').innerText = timeStr; }
-            else if (type === 'RESET') location.reload();
-            document.getElementById('status').innerText = status;
+            
+            if (type === 'IN') { 
+                logs.in = time; currentStatus = 'WORKING'; 
+                document.getElementById('log-in').innerText = timeStr; 
+            } else if (type === 'MS') { 
+                logs.mealS = time; currentStatus = 'MEAL'; 
+                document.getElementById('log-meal').innerText = `${timeStr} - --:--`; 
+            } else if (type === 'ME') { 
+                logs.mealE = time; currentStatus = 'WORKING'; 
+                document.getElementById('log-meal').innerText = `${formatTime(new Date(logs.mealS))} - ${timeStr}`; 
+            } else if (type === 'OUT') { 
+                logs.out = time; currentStatus = 'DONE'; 
+                document.getElementById('log-out').innerText = timeStr; 
+            } else if (type === 'RESET') {
+                location.reload();
+            }
+            document.getElementById('status-label').innerText = currentStatus;
+            renderButtons();
         }
 
         function renderButtons() {
             const container = document.getElementById('buttons');
             let html = '';
-            if (status === 'IDLE') html = '<button class="in" onclick="handleAction(\'IN\')">CLOCK-IN</button>';
-            else if (status === 'WORKING') html = '<button class="meal" onclick="handleAction(\'MS\')">MEAL START</button><button class="out" onclick="handleAction(\'OUT\')">CLOCK-OUT</button>';
-            else if (status === 'MEAL') html = '<button class="meal" onclick="handleAction(\'ME\')">MEAL END</button><button class="out" onclick="handleAction(\'OUT\')">CLOCK-OUT</button>';
-            else if (status === 'DONE') html = '<button class="reset" onclick="handleAction(\'RESET\')">NEW LOG</button>';
-            if (container.innerHTML !== html) container.innerHTML = html;
+            
+            if (currentStatus === 'IDLE') {
+                html = '<button class="in-btn" onclick="handleAction(\'IN\')">CLOCK-IN</button>';
+            } else if (currentStatus === 'WORKING') {
+                html = '<button class="meal-btn" onclick="handleAction(\'MS\')">MEAL START</button>' +
+                       '<button class="out-btn" onclick="handleAction(\'OUT\')">CLOCK-OUT</button>';
+            } else if (currentStatus === 'MEAL') {
+                html = '<button class="meal-btn" onclick="handleAction(\'ME\')">MEAL END</button>' +
+                       '<button class="out-btn" onclick="handleAction(\'OUT\')">CLOCK-OUT</button>';
+            } else if (currentStatus === 'DONE') {
+                html = '<button class="reset-btn" onclick="handleAction(\'RESET\')">NEW LOG</button>';
+            }
+            
+            if (container.innerHTML !== html) {
+                container.innerHTML = html;
+            }
         }
+        
+        // Initializing
         setInterval(update, 1000);
         update();
     </script>
